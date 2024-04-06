@@ -1,2 +1,4 @@
-com\mycompany\itp4511_assignment\JakartaRestConfiguration.class
-com\mycompany\itp4511_assignment\resources\JakartaEE8Resource.class
+ict\db\UserDB.class
+ict\servlet\LoginController.class
+ict\bean\User.class
+ict\run\CreateUserTable.class
