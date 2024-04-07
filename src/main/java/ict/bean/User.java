@@ -9,10 +9,12 @@ package ict.bean;
  * @author User
  */
 public class User {
+    private int id;
     private String username;
     private String email;
     private String phone;
     private String role;
+    private final String[] defaultRole = { "user", "technician", "staff", "courier", "admin" };
 
     public User() {
     }
@@ -22,6 +24,10 @@ public class User {
         this.email = email;
         this.phone = phone;
         this.role = role;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -40,6 +46,10 @@ public class User {
         return role;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }
@@ -53,11 +63,21 @@ public class User {
     }
 
     public void setRole(String role) {
-        this.role = role;
+        System.out.println("role: " + role);
+        if (role.equals(defaultRole[0]) || role.equals(defaultRole[1]) || role.equals(defaultRole[2])
+                || role.equals(defaultRole[3]) || role.equals(defaultRole[4])) {
+            this.role = role;
+        } else {
+            this.role = defaultRole[0];
+        }
     }
-    
+
     @Override
     public String toString() {
-        return "UserInfo{" + "username=" + username + ", email=" + email + ", phone=" + phone + ", role=" + role + '}';
+        return "UserInfo{" + "id=" + id + ", username=" + username + ", email=" + email + ", phone=" + phone + ", role=" + role + '}';
+    }
+
+    public boolean isNull() {
+        return id == 0 && username == null && email == null && phone == null && role == null;
     }
 }

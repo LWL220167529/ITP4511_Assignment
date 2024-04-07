@@ -6,9 +6,6 @@
     <title>Document</title>
 </head>
 <body>
-    <% if (session.getAttribute("username") == null) { 
-        response.sendRedirect("login.jsp");
-    } %>
         
     <%@ include file="header.jsp" %>
     

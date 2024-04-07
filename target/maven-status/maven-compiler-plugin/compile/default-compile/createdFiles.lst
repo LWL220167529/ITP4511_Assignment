@@ -2,3 +2,6 @@ ict\db\UserDB.class
 ict\servlet\LoginController.class
 ict\bean\User.class
 ict\run\CreateUserTable.class
+ict\servlet\UserController.class
+ict\bean\Users.class
+ict\tag\UserTag.class

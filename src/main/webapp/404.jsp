@@ -12,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <center><img width="75%" src="http://159.223.94.246:5000/static/images/404.png"></center>
+        <center><img width="75%" src="http://travelmen.org/static/images/404.png"></center>
     </body>
 </html>

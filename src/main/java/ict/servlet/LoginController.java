@@ -7,7 +7,6 @@ package ict.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -65,7 +64,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doPost(request, response);
+        doLogout(request, response);
     }
 
     /**
@@ -87,9 +86,6 @@ public class LoginController extends HttpServlet {
         } else if ("authenticate".equals(action)) {
             doAuthenticate(request, response);
             return;
-        } else if (isAuthenticated(request)) {
-            doWelcome(request, response);
-            return;
         } else {
             doLogout(request, response);
             return;
@@ -101,7 +97,7 @@ public class LoginController extends HttpServlet {
 
     private void doWelcome(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String targetURL = "home.jsp";
+        String targetURL = getServletContext().getContextPath() + "/home.jsp";
         response.sendRedirect(targetURL);
         return;
     }
@@ -118,7 +114,7 @@ public class LoginController extends HttpServlet {
 
     private void doLogin(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String targetURL = "/";
+        String targetURL = getServletContext().getContextPath();
         response.sendRedirect(targetURL);
         return;
     }
@@ -141,20 +137,20 @@ public class LoginController extends HttpServlet {
         String password = request.getParameter("password");
 
         String targetURL;
-        boolean isValid = db.isValidUser(username, password);
+        String[] isValid = db.isValidUser(username, password);
         HttpSession session = request.getSession(true);
 
-        if (isValid) {
+        if (Boolean.parseBoolean(isValid[0])) {
             User bean = new User();
-            bean.setUsername(username);
+            bean.setUsername(isValid[1]);
+            bean.setRole(isValid[2]);
             session.setAttribute("user", bean);
-            targetURL = "home.jsp";
+            targetURL = getServletContext().getContextPath() + "/home.jsp";
         } else {
             String error = "Invalid login. Please try again.";
             session.setAttribute("error", error);
-            targetURL = "/";
+            targetURL = getServletContext().getContextPath(); // Fix: Call getContextPath() method to get the context path as a string
         }
-        System.out.println("targetURL: " + targetURL);
         response.sendRedirect(targetURL);
         return;
     }
