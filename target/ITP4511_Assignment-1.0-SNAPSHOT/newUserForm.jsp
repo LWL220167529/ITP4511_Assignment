@@ -34,6 +34,18 @@
                     <td><input type="text" name="email" id="email"></td>
                 </tr>
                 <tr>
+                    <td><label for="campus">Campus:</label></td>
+                    <td>
+                        <select name="campus" id="campus">
+                            <option value="CW">Chai Wan</option>
+                            <option value="LWL">Lee Wai Lee </option>
+                            <option value="ST">Sha Tin</option>
+                            <option value="TM">Tuen Mun</option>
+                            <option value="TY">Tsing Yi</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <td><label for="role">Role:</label></td>
                     <td>
                         <select name="role" id="role">

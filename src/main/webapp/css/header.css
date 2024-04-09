@@ -17,11 +17,11 @@ nav div {
     display: inline-block;
 }
 
-nav div a:hover {
+.page:hover, .logout:hover {
     color: #ff0000;
 }
 
-.page:hover, .user:hover, .logout:hover {
+.page:hover, .logout:hover {
     background-color: #97c5d670;
 }
 

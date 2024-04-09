@@ -18,12 +18,13 @@
         <%@ include file="header.jsp" %>
         <table class="showUser" border="1">
             <tr>
-                <th colspan="5"><a href="newUserForm.jsp">New User</a></th>
+                <th colspan="6"><a href="newUserForm.jsp">New User</a></th>
             </tr>
             <tr>
                 <th>Username</th>
                 <th>Phone</th>
                 <th>Email</th>
+                <th>Campuse</th>
                 <th>Role</th>
                 <th>Edit</th>
             </tr>

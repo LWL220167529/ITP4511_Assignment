@@ -60,6 +60,7 @@ public class UserDB {
                 user.setUsername(rs.getString("username"));
                 user.setPhone(rs.getString("phone"));
                 user.setEmail(rs.getString("email"));
+                user.setCampus(rs.getString("campus"));
                 user.setRole(rs.getString("role"));
                 User.add(user);
             }
@@ -106,6 +107,7 @@ public class UserDB {
                 user.setUsername(rs.getString("username"));
                 user.setPhone(rs.getString("phone"));
                 user.setEmail(rs.getString("email"));
+                user.setCampus(rs.getString("campus"));
                 user.setRole(rs.getString("role"));
             }
             rs.close();
@@ -137,7 +139,7 @@ public class UserDB {
     }
 
     public String [] isValidUser(String user, String pwd) {
-        String [] isValid = new String[3];
+        String [] isValid = new String[4];
         isValid[0] = "false";
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -158,6 +160,7 @@ public class UserDB {
                 isValid[0] = "true";
                 isValid[1] = rs.getString("username");
                 isValid[2] = rs.getString("role");
+                isValid[3] = rs.getString("campus");
             }
 
             return isValid;
@@ -199,6 +202,7 @@ public class UserDB {
                     + "password varchar(25) not null,"
                     + "phone varchar(25),"
                     + "email varchar(25),"
+                    + "campus varchar(25) not null,"
                     + "role varchar(25) not null,"
                     + "primary key (Id)"
                     + ")";
@@ -225,13 +229,14 @@ public class UserDB {
             }
             System.out.println(user.toString());
             conn = getConnection();
-            stmt = conn.prepareStatement("INSERT INTO user (`username`, `password`, `phone`, `email`, `role`)"
-            + " values (?,?,?,?,?)");
+            stmt = conn.prepareStatement("INSERT INTO user (`username`, `password`, `phone`, `email`, `campus`, `role`)"
+            + " values (?,?,?,?,?,?)");
             stmt.setString(1, user.getUsername());
             stmt.setString(2, pwd);
             stmt.setString(3, user.getPhone());
             stmt.setString(4, user.getEmail());
-            stmt.setString(5, user.getRole());
+            stmt.setString(5, user.getCampus());
+            stmt.setString(6, user.getRole());
             int rowCount = stmt.executeUpdate();
 
             if (rowCount >= 1 ) {
@@ -312,12 +317,13 @@ public class UserDB {
         PreparedStatement stmt = null;
         try {
             conn = getConnection();
-            stmt = conn.prepareStatement("update user set username = ?, phone = ?, email = ?, role = ? where id = ?");
+            stmt = conn.prepareStatement("update user set username = ?, phone = ?, email = ?, role = ?, campus = ? where id = ?");
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPhone());
             stmt.setString(3, user.getEmail());
-            stmt.setString(4, user.getRole());
-            stmt.setInt(5, user.getId());
+            stmt.setString(4, (user.getId() == 0) ? "admin" : user.getRole());
+            stmt.setString(5, user.getCampus());
+            stmt.setInt(6, user.getId());
             int rowCount = stmt.executeUpdate();
             if (rowCount >= 1) {
                 updated = true;

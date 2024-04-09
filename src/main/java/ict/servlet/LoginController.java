@@ -23,7 +23,7 @@ import ict.db.UserDB;
  */
 @WebServlet(name = "LoginController", urlPatterns = { "/LoginController" })
 public class LoginController extends HttpServlet {
-    private UserDB db;
+    private UserDB udb;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -95,13 +95,6 @@ public class LoginController extends HttpServlet {
         // }
     }
 
-    private void doWelcome(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String targetURL = getServletContext().getContextPath() + "/home.jsp";
-        response.sendRedirect(targetURL);
-        return;
-    }
-
     private void doLogout(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
@@ -137,15 +130,16 @@ public class LoginController extends HttpServlet {
         String password = request.getParameter("password");
 
         String targetURL;
-        String[] isValid = db.isValidUser(username, password);
+        String[] isValid = udb.isValidUser(username, password);
         HttpSession session = request.getSession(true);
 
         if (Boolean.parseBoolean(isValid[0])) {
             User bean = new User();
             bean.setUsername(isValid[1]);
             bean.setRole(isValid[2]);
+            bean.setCampus(isValid[3]);
             session.setAttribute("user", bean);
-            targetURL = getServletContext().getContextPath() + "/home.jsp";
+            targetURL = getServletContext().getContextPath() + "/DeviceController?action=getCampus&campus=" + bean.getCampus();
         } else {
             String error = "Invalid login. Please try again.";
             session.setAttribute("error", error);
@@ -171,7 +165,7 @@ public class LoginController extends HttpServlet {
         String dbUser = this.getServletContext().getInitParameter("dbUser");
         String dbPassword = this.getServletContext().getInitParameter("dbPassword");
 
-        db = new UserDB(dbUrl, dbUser, dbPassword);
+        udb = new UserDB(dbUrl, dbUser, dbPassword);
 
     }
 }

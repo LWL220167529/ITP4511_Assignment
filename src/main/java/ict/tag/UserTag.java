@@ -52,6 +52,7 @@ public class UserTag extends SimpleTagSupport {
                     "<td>" + user.getUsername() + "</td>" +
                     "<td>" + user.getPhone() + "</td>" +
                     "<td>" + user.getEmail() + "</td>" +
+                    "<td>" + setCampus(user.getCampus()) + "</td>" +
                     "<td>" + user.getRole() + "</td>" +
                     "<td><form method=\"post\" action=\"UserController\">" +
                     "<input type=\"hidden\" name=\"action\" value=\"edit\">" +
@@ -65,6 +66,22 @@ public class UserTag extends SimpleTagSupport {
             }
         } catch (IOException ioe) {
             System.out.println("Error generating prime: " + ioe);
+        }
+    }
+    
+    public String setCampus(String campus) {
+        if ("CW".equals(campus)) {
+            return "Chai Wan (CW)";
+        } else if ("LWL".equals(campus)) {
+            return "Lee Wai Lee (LWL)";
+        } else if ("ST".equals(campus)) {
+            return "Sha Tin (ST)";
+        } else if ("TM".equals(campus)) {
+            return "Tuen Mun (TM)";
+        } else if ("TY".equals(campus)) {
+            return "Tsing Yi (TY)";
+        } else {
+            return "Unknown";
         }
     }
 }
