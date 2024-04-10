@@ -22,12 +22,11 @@
         <%
             } else {
         %>
-        <link rel="stylesheet" type="text/css" href="css/form.css" />
     </head>
     
     <body>
         <%@ include file="header.jsp" %>
-        <form method="post" action="UserController">
+        <form method="post" action="User">
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="id" value="<%= user.getId() %>">
             <table>
@@ -46,7 +45,7 @@
                 <tr>
                     <td>Campus:</td>
                     <td>
-                        <% String campus = user.getCampus(); %>
+                        <% campus = user.getCampus(); %>
                         <select name="campus" id="campus">
                             <option value="CW" <%= campus.equals("CW") ? "selected" : "" %>>Chai Wan</option>
                             <option value="LWL" <%= campus.equals("LWL") ? "selected" : "" %>>Lee Wai Lee </option>

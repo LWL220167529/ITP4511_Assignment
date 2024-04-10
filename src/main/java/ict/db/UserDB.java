@@ -144,16 +144,18 @@ public class UserDB {
         Connection conn = null;
         PreparedStatement stmt = null;
         String preQueryStatement = "SELECT * FROM user WHERE "
-                + "username=? or email=? or phone=? and password=?";
+                + "username=? and password=? or email=? and password=? or phone=? and password=?";
         // 2. get the prepare Statement
         try {
             conn = getConnection();
             stmt = conn.prepareStatement(preQueryStatement);
             // 3. update the placeholders with username and pwd
             stmt.setString(1, user);
-            stmt.setString(2, user);
+            stmt.setString(2, pwd);
             stmt.setString(3, user);
             stmt.setString(4, pwd);
+            stmt.setString(5, user);
+            stmt.setString(6, pwd);
             // 4. execute the query and assign to the result
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -190,7 +192,7 @@ public class UserDB {
         }
     }
 
-    public void CreateUserTable() {
+    public void createUserTable() {
         Statement stmt = null;
         Connection conn = null;
         try {
@@ -205,7 +207,7 @@ public class UserDB {
                     + "campus varchar(25) not null,"
                     + "role varchar(25) not null,"
                     + "primary key (Id)"
-                    + ")";
+                    + "FOREIGN KEY (campus) REFERENCES campus(id))";
             stmt.execute(sql);
             stmt.close();
             conn.close();

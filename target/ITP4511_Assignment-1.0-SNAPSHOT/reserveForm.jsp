@@ -4,42 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reserve Form</title>
-    <link rel="stylesheet" href="css/form.css">
-    <link rel="stylesheet" href="css/table.css">
 </head>
 <body>
     <%@ include file="header.jsp" %>
-    <%@ page import="ict.bean.CampusDevice" %>
+    <%@ page import="ict.bean.CampusEquipment" %>
     <% 
-        CampusDevice device = (CampusDevice) request.getAttribute("device");
+        CampusEquipment equipment = (CampusEquipment) request.getAttribute("equipment");
     %>
-    <from method="post">
+    <form method="post" action="Reserve">
         <input type="hidden" name="action" value="reserve">
-        <input type="hidden" name="id" value="<%= device.getId() %>" %>
+        <input type="hidden" name="equipmentId" value="<%= equipment.getId() %>" %>
         <table width="75%" height="75%">
             <tr>
-                <th colspan="2" ><img src="<%= (device.getDeviceImage() != null) ? "img/" + device.getDeviceImage() : "http://travelmen.org/static/images/404.png" %>" /></td>
+                <th colspan="2" ><img src="<%= (equipment.getEquipmentImage() != null) ? "img/" + equipment.getEquipmentImage() : "http://travelmen.org/static/images/404.png" %>" /></td>
             </tr>
             <tr>
-                <td><label for="deviceName">Device Name:</label></td>
-                <td><input type="text" id="deviceName" name="deviceName" value="<%= device.getDeviceName() %>" readonly></td>
+                <td><label for="equipmentName">Equipment Name:</label></td>
+                <td><input type="text" id="equipmentName" name="equipmentName" value="<%= equipment.getEquipmentName() %>" readonly></td>
             </tr>
             <tr>
-                <td><label for="campus">Campus:</label></td>
-                <td><input type="text" id="campus" name="campus" value="<%= device.getCampus() %>" readonly></td>
+                <td><label for="belongCampusId">Campus:</label></td>
+                <td><input type="text" id="belongCampusId" name="belongCampusId" value="<%= equipment.getCampus() %>" readonly></td>
             </tr>
             <tr>
                 <td><label for="quantity">Quantity:</label></td>
-                <td><input type="number" id="quantity" name="quantity" min="1" max="<%= device.getQuantity() %>" value="1"></td>
+                <td><input type="number" id="quantity" name="quantity" min="1" max="<%= equipment.getQuantity() %>" value="1"></td>
             </tr>
             <tr>
                 <td><label for="date">Date:</label></td>
-                <td><input type="date" id="date" name="date"></td>
+                <td><input type="date" id="date" name="date" required></td>
             </tr>
             <tr>
                 <td colspan="2"><center><input type="submit" value="Reserve"></center></td>
             </tr>
         </table>
-    </from>
+    </form>
 </body>
 </html>

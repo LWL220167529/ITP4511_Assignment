@@ -1,8 +1,10 @@
 <%@ page import="ict.bean.User" %>
 <html>
   <link rel="stylesheet" type="text/css" href="css/header.css" />
+  <link rel="stylesheet" href="css/table.css">
+  <link rel="stylesheet" href="css/form.css">
   <% User headerUser = (User) session.getAttribute("user"); if (headerUser ==
-  null) { response.sendRedirect("LoginController"); return; }  String message =
+  null) { response.sendRedirect("Login"); return; }  String message =
   (String) session.getAttribute("message"); if (message != null) { %>
   <script>
     alert("<%=message%>");
@@ -15,13 +17,13 @@
     if (headerUser != null) { role = headerUser.getRole(); campus = headerUser.getCampus(); } %>
     <div class="page" style="margin-left: 5%">
       <a
-        href="<%= request.getServletContext().getContextPath() %>/DeviceController?action=getCampus&campus=<%= campus %>"
+        href="<%= request.getServletContext().getContextPath() %>/Equipment?action=getCampus&campus=<%= campus %>"
         >Home</a
       >
     </div>
-    <% if (role.equalsIgnoreCase("user") || role.equalsIgnoreCase("staff")) { %>
+    <% if (role.equalsIgnoreCase("user") || role.equalsIgnoreCase("staff") || role.equalsIgnoreCase("admin")) { %>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
+      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=list"
         >Wish List</a
       >
     </div>
@@ -77,7 +79,7 @@
     <% } %> <% } %>
     <div class="logout" style="margin-right: 5%">
       <a
-        href="<%= request.getServletContext().getContextPath() %>/LoginController"
+        href="<%= request.getServletContext().getContextPath() %>/Login"
         >Logout</a
       >
     </div>

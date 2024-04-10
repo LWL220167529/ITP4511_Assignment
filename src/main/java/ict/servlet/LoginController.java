@@ -21,7 +21,7 @@ import ict.db.UserDB;
  *
  * @author User
  */
-@WebServlet(name = "LoginController", urlPatterns = { "/LoginController" })
+@WebServlet(name = "LoginController", urlPatterns = { "/Login" })
 public class LoginController extends HttpServlet {
     private UserDB udb;
 
@@ -38,7 +38,6 @@ public class LoginController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -125,7 +124,6 @@ public class LoginController extends HttpServlet {
 
     private void doAuthenticate(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // TODO Auto-generated method stub
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -139,7 +137,7 @@ public class LoginController extends HttpServlet {
             bean.setRole(isValid[2]);
             bean.setCampus(isValid[3]);
             session.setAttribute("user", bean);
-            targetURL = getServletContext().getContextPath() + "/DeviceController?action=getCampus&campus=" + bean.getCampus();
+            targetURL = getServletContext().getContextPath() + "/Equipment?action=getCampus&campus=" + bean.getCampus();
         } else {
             String error = "Invalid login. Please try again.";
             session.setAttribute("error", error);

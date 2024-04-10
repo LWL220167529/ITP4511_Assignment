@@ -10,11 +10,10 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>New User</title>
-        <link rel="stylesheet" type="text/css" href="css/form.css" />
     </head>
     <body>
         <%@ include file="header.jsp" %>
-        <form method="post" action="UserController">
+        <form method="post" action="User">
             <input type="hidden" name="action" value="add">
             <table>
                 <tr>

@@ -20,7 +20,7 @@ import ict.db.UserDB;
  *
  * @author User
  */
-@WebServlet(name = "UserController", urlPatterns = { "/UserController" })
+@WebServlet(name = "UserController", urlPatterns = { "/User" })
 public class UserController extends HttpServlet {
     private UserDB db;
 
@@ -37,7 +37,6 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -108,11 +107,11 @@ public class UserController extends HttpServlet {
             return;
         }
         String username = request.getParameter("username");
+        username = username.replace("  ", " ");
         if (username == null || username.isEmpty()) {
             message = "Username is required\n";
             hasError = true;
         }
-        username = username.replace("  ", "");
         String phone = request.getParameter("phone");
         if (phone == null || phone.isEmpty() || phone.length() > 8) {
             message += "Phone is required\n";
@@ -132,7 +131,7 @@ public class UserController extends HttpServlet {
         String role = request.getParameter("role");
         System.out.println(role);
         if (hasError) {
-            sendRedirectAndMessage(request, response, message, getServletContext().getContextPath() + "/userEditForm.jsp");
+            sendRedirectAndMessage(request, response, message, "/userEditForm.jsp");
             return;
         }
         role = role.toLowerCase();
@@ -140,14 +139,14 @@ public class UserController extends HttpServlet {
             user = new User(username, email, phone, campus, role);
             user.setId(id);
         } catch (IllegalArgumentException e) {
-            sendRedirectAndMessage(request, response, e.getMessage(), getServletContext().getContextPath() + "/home.jsp");
+            sendRedirectAndMessage(request, response, e.getMessage(), "/home.jsp");
             return;
         }
         if (!db.updateUser(user)) {
-            sendRedirectAndMessage(request, response, "Failed to update user", getServletContext().getContextPath() + "/userEditForm.jsp");
+            sendRedirectAndMessage(request, response, "Failed to update user", "/userEditForm.jsp");
             return;
         }
-        sendRedirectAndMessage(request, response, "User updated successfully", getServletContext().getContextPath() + "/user.jsp");
+        sendRedirectAndMessage(request, response, "User updated successfully", "/user.jsp");
     }
 
     public void showUserEditForm(HttpServletRequest request, HttpServletResponse response)
@@ -156,7 +155,7 @@ public class UserController extends HttpServlet {
         // get user by id
         // set user to request
         // forward to user edit form
-        String targetURL = getServletContext().getContextPath() + "/userEditForm.jsp";
+        String targetURL = "/userEditForm.jsp";
         int id = 0;
         HttpSession session = request.getSession();
         try {
@@ -175,7 +174,7 @@ public class UserController extends HttpServlet {
             return;
         }
         session.setAttribute("userForm", user);
-        response.sendRedirect(targetURL);
+        response.sendRedirect(getServletContext().getContextPath() + targetURL);
     }
 
     public void addUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -183,11 +182,11 @@ public class UserController extends HttpServlet {
         boolean hasError = false;
         User user;
         String username = request.getParameter("username");
+        username = username.replace("  ", " ");
         if (username == null || username.isEmpty()) {
             message = "Username is required\n";
             hasError = true;
         }
-        username = username.replace("  ", "");
         String password = request.getParameter("password");
         if (password == null || password.isEmpty()) {
             message += "Password is required\n";
@@ -211,28 +210,28 @@ public class UserController extends HttpServlet {
         campus = campus.toUpperCase();
         String role = request.getParameter("role");
         if (hasError) {
-            sendRedirectAndMessage(request, response, message, getServletContext().getContextPath() + "/user.jsp");
+            sendRedirectAndMessage(request, response, message, "/user.jsp");
             return;
         }
         role = role.toLowerCase();
         try {
             user = new User(username, email, phone, campus, role);
         } catch (IllegalArgumentException e) {
-            sendRedirectAndMessage(request, response, e.getMessage(), getServletContext().getContextPath() + "/home.jsp");
+            sendRedirectAndMessage(request, response, e.getMessage(), "/home.jsp");
             return;
         }
         if (!db.addUser(user, password)) {
-            sendRedirectAndMessage(request, response, "Failed to add user", getServletContext().getContextPath() + "/user.jsp");
+            sendRedirectAndMessage(request, response, "Failed to add user", "/user.jsp");
             return;
         }
-        sendRedirectAndMessage(request, response, "User added successfully", getServletContext().getContextPath() + "/user.jsp");
+        sendRedirectAndMessage(request, response, "User added successfully", "/user.jsp");
     }
 
     public void sendRedirectAndMessage(HttpServletRequest request, HttpServletResponse response, String message,
             String targetURL) throws IOException {
         HttpSession session = request.getSession();
         session.setAttribute("message", message);
-        response.sendRedirect(targetURL);
+        response.sendRedirect(getServletContext().getContextPath() + targetURL);
     }
 
     /**

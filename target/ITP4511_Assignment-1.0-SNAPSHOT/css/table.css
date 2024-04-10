@@ -7,6 +7,10 @@ h1 {
     text-align: center;
 }
 
+td {
+    text-align: center;
+}
+
 .campus {
     margin: auto;
     width: 75%;
