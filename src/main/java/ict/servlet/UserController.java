@@ -83,6 +83,8 @@ public class UserController extends HttpServlet {
             addUser(request, response);
         } else if ("update".equals(action)) {
             updateUser(request, response);
+        } else {
+            response.sendRedirect(getServletContext().getContextPath() + "/user.jsp");
         }
         // else if ("delete".equals(action)) {
         // deleteUser(request, response);

@@ -10,9 +10,14 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>New User</title>
+        <link rel="stylesheet" href="css/form.css">
     </head>
     <body>
         <%@ include file="header.jsp" %>
+        <% if (!role.equalsIgnoreCase("admin")) {
+           
+        response.sendRedirect("Equipment?action=getCampus&campus=" + campus);
+        } %>
         <form method="post" action="User">
             <input type="hidden" name="action" value="add">
             <table>
@@ -41,6 +46,7 @@
                             <option value="ST">Sha Tin</option>
                             <option value="TM">Tuen Mun</option>
                             <option value="TY">Tsing Yi</option>
+                            <option value="CW">Other</option>
                         </select>
                     </td>
                 </tr>

@@ -34,7 +34,7 @@ public class ReserveDB {
 
         return DriverManager.getConnection(dburl, dbUser, dbPassword);
     }
-    
+
     public void createReserveTable() {
         Statement stmt = null;
         Connection conn = null;
@@ -47,13 +47,15 @@ public class ReserveDB {
                     "equipment_id int not null," +
                     "belong_campus_id varchar(25) not null," +
                     "destination_campus_id varchar(25) not null," +
+                    "delivery_user_id int," +
                     "quantity int not null," +
                     "status varchar(255) not null," +
                     "date date not null," +
                     "FOREIGN KEY (belong_campus_id) REFERENCES campus(Id), " +
                     "FOREIGN KEY (destination_campus_id) REFERENCES campus(Id), " +
                     "FOREIGN KEY (equipment_id) REFERENCES campus_equipment(id), " +
-                    "FOREIGN KEY (user_id) REFERENCES user(id)" +
+                    "FOREIGN KEY (user_id) REFERENCES user(id)," + // Added missing comma here
+                    "FOREIGN KEY (delivery_user_id) REFERENCES user(id)" +
                     ")";
             stmt.execute(sql);
             stmt.close();
@@ -74,11 +76,12 @@ public class ReserveDB {
         PreparedStatement pstmt = null;
         try {
             conn = getConnection();
-            String sql = "INSERT INTO Reserve (user_id, equipment_id, belong_campus_id, destination_campus_id, quantity, status, date) " +
-                         "VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO Reserve (user_id, equipment_id, belong_campus_id, destination_campus_id, quantity, status, date) "
+                    +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, reserve.getUserId());
-            pstmt.setInt(2, reserve.getEquipmentId());
+            pstmt.setInt(2, reserve.getCampusEquipmentId());
             pstmt.setString(3, reserve.getBelongCampusId());
             pstmt.setString(4, reserve.getDestinationCampusId());
             pstmt.setInt(5, reserve.getQuantity());
@@ -86,7 +89,7 @@ public class ReserveDB {
             pstmt.setDate(7, reserve.getDate());
             int rowCount = pstmt.executeUpdate();
 
-            if (rowCount >= 1 ) {
+            if (rowCount >= 1) {
                 result = true;
             }
 
@@ -153,44 +156,211 @@ public class ReserveDB {
         return reserves;
     }
 
+    public List<WishEquipment> getReserves() {
+        List<WishEquipment> reserves = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql1 = "SELECT r.id, r.user_id, u.username, r.equipment_id, r.quantity, c.campus as belong_campus_id, r.destination_campus_id, "
+                +
+                "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name "
+                +
+                "FROM Reserve r " +
+                "JOIN campus_equipment c ON r.equipment_id = c.id " +
+                "JOIN equipment e ON c.equipment_id = e.id " +
+                "JOIN user u ON u.id = r.user_id " +
+                "JOIN campus cs ON cs.id = c.campus " +
+                "join campus cs2 ON  cs2.id = destination_campus_id where r.status = 'pending';";
+        String sql2 = "SELECT r.id, r.user_id, u.username, r.equipment_id, r.delivery_user_id, du.username as delivery_username, r.quantity, c.campus as belong_campus_id, r.destination_campus_id, "
+                +
+                "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name "
+                +
+                "FROM Reserve r " +
+                "JOIN campus_equipment c ON r.equipment_id = c.id " +
+                "JOIN equipment e ON c.equipment_id = e.id " +
+                "JOIN user u ON u.id = r.user_id " +
+                "JOIN user du ON du.id = r.delivery_user_id " +
+                "JOIN campus cs ON cs.id = c.campus " +
+                "join campus cs2 ON  cs2.id = destination_campus_id ";
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql1);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                reserves.add(setReserves(rs, false));
+            }
+            pstmt.close();
+            pstmt = conn.prepareStatement(sql2);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                reserves.add(setReserves(rs, true));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return reserves;
+    }
+
     public List<WishEquipment> getReservesByUserId(int userId) {
         List<WishEquipment> reserves = new ArrayList<>();
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        String sql1 = "SELECT r.id, r.user_id, u.username, r.equipment_id, r.quantity, c.campus as belong_campus_id, r.destination_campus_id, "
+                +
+                "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name "
+                +
+                "FROM Reserve r " +
+                "JOIN campus_equipment c ON r.equipment_id = c.id " +
+                "JOIN equipment e ON c.equipment_id = e.id " +
+                "JOIN user u ON u.id = r.user_id " +
+                "JOIN campus cs ON cs.id = c.campus " +
+                "JOIN campus cs2 ON  cs2.id = destination_campus_id " +
+                "WHERE r.status = 'pending' AND r.user_id = ?";
+        String sql2 = "SELECT r.id, r.user_id, u.username, r.equipment_id, r.delivery_user_id, du.username as delivery_username, r.quantity, c.campus as belong_campus_id, r.destination_campus_id, "
+                +
+                "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name "
+                +
+                "FROM Reserve r " +
+                "JOIN campus_equipment c ON r.equipment_id = c.id " +
+                "JOIN equipment e ON c.equipment_id = e.id " +
+                "JOIN user u ON u.id = r.user_id " +
+                "JOIN user du ON du.id = r.delivery_user_id " +
+                "JOIN campus cs ON cs.id = c.campus " +
+                "join campus cs2 ON  cs2.id = destination_campus_id " +
+                "where r.user_id = ?;";
         try {
             conn = getConnection();
-            String sql = "SELECT r.id, r.user_id, u.username, r.equipment_id, r.quantity, c.campus as belong_campus_id, r.destination_campus_id, " +
-            "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name " +
-            "FROM Reserve r " +
-            "JOIN campus_equipment c ON r.equipment_id = c.id " +
-            "JOIN equipment e ON c.equipment_id = e.id " +
-            "JOIN user u ON u.id = r.user_id " +
-            "JOIN campus cs ON cs.id = c.campus " +
-            "join campus cs2 ON  cs2.id = destination_campus_id " +
-            "where r.user_id = ?;";
-            pstmt = conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql1);
             pstmt.setInt(1, userId);
             rs = pstmt.executeQuery();
             while (rs.next()) {
-                WishEquipment reserve = new WishEquipment();
-                // reserve id
-                reserve.setId(rs.getInt("id"));
-                reserve.setQuantity(rs.getInt("quantity"));
-                reserve.setStatus(rs.getString("status"));
-                reserve.setDate(rs.getDate("date"));
-                // user details
-                reserve.setUserId(rs.getInt("user_id"));
-                reserve.setUsername(rs.getString("username"));
-                // equipment details
-                reserve.setEquipmentId(rs.getInt("equipment_id"));
-                reserve.setEquipmentName(rs.getString("name"));
-                reserve.setEquipmentImage(rs.getString("image"));
-                // campus details
-                reserve.setBelongCampusId(rs.getString("belong_campus_id"));
-                reserve.setBelongCampusName(rs.getString("belong_campus_name"));
-                reserve.setDestinationCampusId(rs.getString("destination_campus_id"));
-                reserve.setDestinationCampusName(rs.getString("destination_campus_name"));
+                reserves.add(setReserves(rs, false));
+            }
+            pstmt.close();
+            pstmt = conn.prepareStatement(sql2);
+            pstmt.setInt(1, userId);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                reserves.add(setReserves(rs, true));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return reserves;
+    }
+
+    public WishEquipment getReserveById(int reserveId) {
+        WishEquipment reserve = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT r.id, r.user_id, u.username, r.equipment_id, r.quantity, c.campus as belong_campus_id, r.destination_campus_id, "
+        +
+        "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name "
+        +
+        "FROM Reserve r " +
+        "JOIN campus_equipment c ON r.equipment_id = c.id " +
+        "JOIN equipment e ON c.equipment_id = e.id " +
+        "JOIN user u ON u.id = r.user_id " +
+        "JOIN campus cs ON cs.id = c.campus " +
+        "JOIN campus cs2 ON  cs2.id = destination_campus_id " +
+        "WHERE r.id = ?";
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, reserveId);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                reserve = setReserves(rs, false);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return reserve;
+    }
+
+    public List<WishEquipment> getReservesByStatusAndUserId(String status, int userId) {
+        List<WishEquipment> reserves = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        boolean delivery = false;
+        String sqlSelect = "SELECT r.id, r.user_id, u.username, r.equipment_id, r.quantity, c.campus as belong_campus_id, r.destination_campus_id, "
+                +
+                "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name ";
+        String sqlFrom =
+                "FROM Reserve r " ;
+        String sqlJoin =
+                "JOIN campus_equipment c ON r.equipment_id = c.id " +
+                "JOIN equipment e ON c.equipment_id = e.id " +
+                "JOIN user u ON u.id = r.user_id " +
+                "JOIN campus cs ON cs.id = c.campus " +
+                "JOIN campus cs2 ON  cs2.id = destination_campus_id " ;
+        String sqlWhere =
+                "WHERE r.status = ? AND r.user_id = ?";
+
+        String sql;
+        if (status.equalsIgnoreCase("pending")) {
+            sql = sqlSelect + sqlFrom + sqlJoin + sqlWhere;
+        } else {
+            sql = sqlSelect + ", r.delivery_user_id, du.username as delivery_username " + sqlFrom + sqlJoin +  
+            "JOIN user du ON du.id = r.delivery_user_id " + sqlWhere;
+            delivery = true;
+        }
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, status);
+            pstmt.setInt(2, userId);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                WishEquipment reserve = setReserves(rs, delivery);
                 reserves.add(reserve);
             }
         } catch (SQLException ex) {
@@ -215,15 +385,18 @@ public class ReserveDB {
         return reserves;
     }
 
-    public void deleteReserve(int reserveId) {
+    public boolean deleteReserve(int reserveId) {
+        boolean result = false;
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
             conn = getConnection();
-            String sql = "DELETE FROM Reserve WHERE id = ?";
+            String sql = "UPDATE Reserve SET status = 'canceled' WHERE id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, reserveId);
-            pstmt.executeUpdate();
+            if (pstmt.executeUpdate() > 0) {
+                result = true;
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {
@@ -240,6 +413,7 @@ public class ReserveDB {
                 ex.printStackTrace();
             }
         }
+        return result;
     }
 
     public void updateReserveStatus(int reserveId, String newStatus) {
@@ -268,5 +442,32 @@ public class ReserveDB {
                 ex.printStackTrace();
             }
         }
+    }
+
+    public WishEquipment setReserves(ResultSet rs, boolean delivery) throws SQLException {
+        WishEquipment reserve = new WishEquipment();
+        // reserve id
+        reserve.setId(rs.getInt("id"));
+        reserve.setQuantity(rs.getInt("quantity"));
+        reserve.setStatus(rs.getString("status"));
+        reserve.setDate(rs.getDate("date"));
+        // user details
+        reserve.setUserId(rs.getInt("user_id"));
+        reserve.setUsername(rs.getString("username"));
+        // equipment details
+        reserve.setEquipmentId(rs.getInt("equipment_id"));
+        reserve.setEquipmentName(rs.getString("name"));
+        reserve.setEquipmentImage(rs.getString("image"));
+        // campus details
+        reserve.setBelongCampusId(rs.getString("belong_campus_id"));
+        reserve.setBelongCampusName(rs.getString("belong_campus_name"));
+        reserve.setDestinationCampusId(rs.getString("destination_campus_id"));
+        reserve.setDestinationCampusName(rs.getString("destination_campus_name"));
+        // delivery user details
+        if (delivery) {
+            reserve.setDeliveryUserId(rs.getInt("delivery_user_id"));
+            reserve.setDeliveryUsername(rs.getString("delivery_username"));
+        }
+        return reserve;
     }
 }

@@ -11,6 +11,15 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>User Edit Form</title>
+        <link rel="stylesheet" href="css/form.css">
+    </head>
+    
+    <body>
+        <%@ include file="header.jsp" %>
+        <% if (!role.equalsIgnoreCase("admin")) {
+           
+        response.sendRedirect("Equipment?action=getCampus&campus=" + campus);
+        } %>
         <% User user = (User) session.getAttribute("userForm"); 
             if (user == null) { 
         %>
@@ -22,10 +31,6 @@
         <%
             } else {
         %>
-    </head>
-    
-    <body>
-        <%@ include file="header.jsp" %>
         <form method="post" action="User">
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="id" value="<%= user.getId() %>">

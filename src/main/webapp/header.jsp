@@ -1,8 +1,6 @@
 <%@ page import="ict.bean.User" %>
 <html>
   <link rel="stylesheet" type="text/css" href="css/header.css" />
-  <link rel="stylesheet" href="css/table.css">
-  <link rel="stylesheet" href="css/form.css">
   <% User headerUser = (User) session.getAttribute("user"); if (headerUser ==
   null) { response.sendRedirect("Login"); return; }  String message =
   (String) session.getAttribute("message"); if (message != null) { %>
@@ -23,7 +21,7 @@
     </div>
     <% if (role.equalsIgnoreCase("user") || role.equalsIgnoreCase("staff") || role.equalsIgnoreCase("admin")) { %>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=list"
+      <a href="<%= request.getServletContext().getContextPath() %>/wishList.jsp"
         >Wish List</a
       >
     </div>
@@ -33,18 +31,13 @@
       >
     </div>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
-        >Borrowing</a
+      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=list"
+        >Borrow records</a
       >
     </div>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
-        >Records</a
-      >
-    </div>
-    <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
-        >Reserve</a
+      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=pending"
+        >Reserve records</a
       >
     </div>
     <div class="page">
@@ -63,11 +56,26 @@
         >Borrow-items-exclusive</a
       >
     </div>
+    <div class="page">
+      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=allList"
+        >Reserves</a
+      >
+    </div>
     <% } %> <% } %> <% if (role.equalsIgnoreCase("admin") ||
     role.equalsIgnoreCase("technician")) { %>
     <div class="page">
       <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
         >Damage</a
+      >
+    </div>
+    <div class="page">
+      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=approval"
+        >approval</a
+      >
+    </div>
+    <div class="page">
+      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=allList"
+        >Reserves</a
       >
     </div>
     <% if (role.equalsIgnoreCase("admin")) { %>

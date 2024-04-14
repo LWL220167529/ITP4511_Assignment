@@ -7,6 +7,7 @@ package ict.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -86,6 +87,7 @@ public class LoginController extends HttpServlet {
             doAuthenticate(request, response);
             return;
         } else {
+            
             doLogout(request, response);
             return;
         }
@@ -96,6 +98,8 @@ public class LoginController extends HttpServlet {
 
     private void doLogout(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        ServletContext context = getServletContext();
+        context.removeAttribute("reserves");
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.removeAttribute("user");
@@ -131,11 +135,8 @@ public class LoginController extends HttpServlet {
         String[] isValid = udb.isValidUser(username, password);
         HttpSession session = request.getSession(true);
 
-        if (Boolean.parseBoolean(isValid[0])) {
-            User bean = new User();
-            bean.setUsername(isValid[1]);
-            bean.setRole(isValid[2]);
-            bean.setCampus(isValid[3]);
+        if (Boolean.valueOf(isValid[0])) {
+            User bean = udb.getUserById(Integer.parseInt(isValid[1]));
             session.setAttribute("user", bean);
             targetURL = getServletContext().getContextPath() + "/Equipment?action=getCampus&campus=" + bean.getCampus();
         } else {

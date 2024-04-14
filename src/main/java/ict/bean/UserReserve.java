@@ -7,11 +7,20 @@ public class UserReserve extends CampusEquipment{
     private int id;
     private int userId;
     private String destinationCampusId;
-    private int quantity;
+    private int quantity = 1;
     private String status;
     private Date date;
+    private int deliveryUserId;
 
     public UserReserve() {
+    }
+
+    public UserReserve(CampusEquipment campusEquipment) {
+        super(campusEquipment.getCampus(), campusEquipment.getEquipmentId(), 
+        campusEquipment.getQuantity(), campusEquipment.getStatus());
+        super.setId(campusEquipment.getId());
+        super.setName(campusEquipment.getName());
+        super.setImage(campusEquipment.getImage());
     }
 
     // Getters and Setters
@@ -30,14 +39,6 @@ public class UserReserve extends CampusEquipment{
 
     public void setUserId(int userId) {
         this.userId = userId;
-    }
-
-    public int getEquipmentId() {
-        return super.getId();
-    }
-
-    public void setEquipmentId(int equipmentId) {
-        super.setId(id);
     }
     
     public String getBelongCampusId() {
@@ -80,8 +81,24 @@ public class UserReserve extends CampusEquipment{
         this.date = date;
     }
 
+    public int getDeliveryUserId() {
+        return this.deliveryUserId;
+    }
+
+    public void setDeliveryUserId(int deliveryUserId) {
+        this.deliveryUserId = deliveryUserId;
+    }
+
     // Equipment getters and setters
-    public String getEquipmentName() {
+
+    public int getCampusEquipmentId() {
+        return super.getId();
+    }
+
+    public void setCampusEquipmentId(int equipmentId) {
+        super.setId(id);
+    }
+    public String setCampusEquipmentName() {
         return super.getName();
     }
 
@@ -95,5 +112,21 @@ public class UserReserve extends CampusEquipment{
 
     public void setCampusEquipmentImage(String image) {
         super.setImage(image);
+    }
+
+    public void setCampusEquipmentQuantity(int quantity) {
+        super.setQuantity(quantity);
+    }
+
+    public int getCampusEquipmentQuantity() {
+        return super.getQuantity();
+    }
+
+    public void setCampusEquipmentStatus(String status) {
+        super.setStatus(status);
+    }
+
+    public String getCampusEquipmentStatus() {
+        return super.getStatus();
     }
 }

@@ -16,9 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import ict.bean.UserReserve;
+import ict.bean.UserReserves;
+import javax.servlet.ServletContext;
 import ict.bean.WishList;
+import ict.bean.WishEquipment;
 import ict.bean.User;
+import ict.bean.Users;
 import ict.db.ReserveDB;
+import ict.db.UserDB;
 
 /**
  *
@@ -27,6 +32,7 @@ import ict.db.ReserveDB;
 @WebServlet(name = "ReserveController", urlPatterns = { "/Reserve" })
 public class ReserveController extends HttpServlet {
     private ReserveDB db;
+    private UserDB udb;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -54,122 +60,58 @@ public class ReserveController extends HttpServlet {
             user = (User) session.getAttribute("user");
         }
 
-        if ("reserve".equalsIgnoreCase(action)) {
-            int userId;
-            int equipmentId;
-            String belongCampusId;
-            String destinationCampusId;
-            int quantity;
-            String status;
-            Date date;
-            try {
-                userId = user.getId();
-                String equipmentIdParam = request.getParameter("equipmentId");
-                belongCampusId = request.getParameter("belongCampusId");
-                String quantityParam = request.getParameter("quantity");
-                String dateParam = request.getParameter("date");
+        if ("wish".equalsIgnoreCase(action)) {
 
-                if (equipmentIdParam == null) {
-                    message += "Please fill id field\n";
-                } 
-                if (belongCampusId == null) {
-                    message += "Please fill campus fields\n";
-                } 
-                if (quantityParam == null) {
-                    message += "Please fill quantity fields\n";
-                } 
-                if (dateParam == null) {
-                    message += "Please fill quantity fields\n";
-                }
+            request.getRequestDispatcher("wishList.jsp").forward(request, response);
 
-                if (isRedirect) {
-
-                    sendRedirectAndMessage(request, response, message,
-                            "/Equipment?action=getCampus&campus=" + user.getCampus());
-                    return;
-                }
-
-                equipmentId = Integer.parseInt(equipmentIdParam);
-                destinationCampusId = user.getCampus();
-                quantity = Integer.parseInt(quantityParam);
-                status = "requesting";
-                date = Date.valueOf(dateParam);
-
-                if (quantity <= 0) {
-                    message += "Quantity must be greater than 0";
-                    isRedirect = true;
-                }
-
-                if (isRedirect) {
-
-                    sendRedirectAndMessage(request, response, message,
-                            "Equipment?action=reserveForm&id=" + equipmentId);
-                    return;
-                }
-
-                
-                UserReserve reserve = new UserReserve();
-
-                reserve.setUserId(userId);
-                reserve.setEquipmentId(equipmentId);
-                reserve.setBelongCampusId(belongCampusId);
-                reserve.setDestinationCampusId(destinationCampusId);
-                reserve.setQuantity(quantity);
-                reserve.setStatus(status);
-                reserve.setDate(date);
-
-                if (db.addReserve(reserve)) {
-                    message += "Reserve successfully";
-                } else {
-                    message += "Reserve failed";
-                }
-                
-                sendRedirectAndMessage(request, response, "Reserve successfully",
-                "/Equipment?action=getCampus&campus=" + user.getCampus());
-            } catch (NumberFormatException e) {
-                // Handle the exception when parsing integers
-                e.printStackTrace(); // Or log the error message
-                return;
-            } catch (IllegalArgumentException e) {
-                // Handle the exception when parsing date
-                e.printStackTrace(); // Or log the error message
-                return;
-            } catch (Exception e) {
-                // Handle other exceptions
-                e.printStackTrace(); // Or log the error message
-                return;
-            }
         } else if ("list".equalsIgnoreCase(action)) {
+
             WishList wishList = new WishList();
             try {
+
                 wishList.setWishEquipments(db.getReservesByUserId(user.getId()));
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
             request.setAttribute("reserves", wishList);
             request.getRequestDispatcher("reserves.jsp").forward(request, response);
+
+        } else if ("allList".equalsIgnoreCase(action)) {
+
+            getAllReserves(request, response);
+
         } else if ("delete".equalsIgnoreCase(action)) {
+
             int id = Integer.parseInt(request.getParameter("id"));
             db.deleteReserve(id);
             response.sendRedirect("Reserve?action=list");
-        } else if ("update".equalsIgnoreCase(action)) {
-            try {
-                int id = Integer.parseInt(request.getParameter("id"));
-                String status = request.getParameter("status");
 
-                db.updateReserveStatus(id, status);
-                response.sendRedirect("Reserve?action=list");
-            } catch (NumberFormatException e) {
-                // Handle the exception when parsing integers
-                e.printStackTrace(); // Or log the error message
-                return;
-            } catch (Exception e) {
-                // Handle other exceptions
-                e.printStackTrace(); // Or log the error message
-                return;
-            }
+        } else if ("update".equalsIgnoreCase(action)) {
+
+           updateReserve(request, response);
+
+        } else if ("reserve".equalsIgnoreCase(action)) {
+
+            addReserve(request, response, message, user);
+
+        } else if ("form".equalsIgnoreCase(action)) {
+
+            getReserveStatus(request, response); 
+        } else if ("approval".equalsIgnoreCase(action)) {
+
+            getApprovalReserve(request, response, user);
+
+        
+        } else if ("pending".equalsIgnoreCase(action)) {
+
+            getPendingReserve(request, response, user);
+
+         
         } else {
-            response.sendRedirect("home.jsp");
+            response.sendRedirect(
+                    request.getServletContext().getContextPath() + "/Equipment?action=getCampus&campus="
+                            + user.getCampus());
         }
     }
 
@@ -203,6 +145,156 @@ public class ReserveController extends HttpServlet {
         processRequest(request, response);
     }
 
+    /**
+     * Adds a reserve for the specified user.
+     *
+     * @param request  the HttpServletRequest object containing the request
+     *                 information
+     * @param response the HttpServletResponse object used to send the response
+     * @param message  the current message string
+     * @param user     the User object representing the user
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs
+     */
+    public void addReserve(HttpServletRequest request, HttpServletResponse response, String message, User user)
+            throws ServletException, IOException {
+        ServletContext context = getServletContext();
+        UserReserves reserves = (UserReserves) context.getAttribute("reserves");
+        Date date = request.getParameter("date") == null ? new Date(System.currentTimeMillis())
+                : Date.valueOf(request.getParameter("date"));
+
+        if (reserves == null) {
+            sendRedirectAndMessage(request, response, "Wish list is null",
+                    "/Equipment?action=getCampus&campus=" + user.getCampus());
+            return;
+        }
+
+        for (UserReserve reserve : reserves.getList()) {
+
+            reserve.setDate(date);
+            reserve.setUserId(user.getId());
+            reserve.setStatus("Pending");
+
+            if (!"available".equalsIgnoreCase(reserve.getCampusEquipmentStatus())) {
+                message += reserve.getName() + " failed\n";
+                continue;
+            }
+
+            if (!db.addReserve(reserve)) {
+                message += reserve.getName() + " failed\n";
+            }
+        }
+
+        context.removeAttribute("reserves");
+
+        message += "Reserve successfully";
+
+        sendRedirectAndMessage(request, response, message,
+                "/Equipment?action=getCampus&campus=" + user.getCampus());
+
+    }
+
+    /**
+     * Retrieves all reserves from the database and forwards the request to the
+     * "reserves.jsp" page.
+     * 
+     * @param request  the HttpServletRequest object
+     * @param response the HttpServletResponse object
+     */
+    public void getAllReserves(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            WishList wishList = new WishList();
+            wishList.setWishEquipments(db.getReserves());
+            request.setAttribute("reserves", wishList);
+            request.getRequestDispatcher("reserves.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Updates the reserve status based on the provided request parameters.
+     * 
+     * @param request  the HttpServletRequest object containing the request parameters
+     * @param response the HttpServletResponse object for sending the response
+     */
+    public void updateReserve(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            String status = request.getParameter("status");
+
+            db.updateReserveStatus(id, status);
+            response.sendRedirect("Reserve?action=list");
+
+        } catch (NumberFormatException e) {
+            // Handle the exception when parsing integers
+            e.printStackTrace(); // Or log the error message
+            return;
+        } catch (Exception e) {
+            // Handle other exceptions
+            e.printStackTrace(); // Or log the error message
+            return;
+        }
+    }
+
+    public void getReserveStatus(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            String id = request.getParameter("id");
+
+            WishEquipment reserve = db.getReserveById(Integer.parseInt(id));
+
+            Users users = udb.getCourier();
+            
+            request.setAttribute("reserve", reserve);
+            request.setAttribute("users", users);
+
+            request.getRequestDispatcher("reserveStatus.jsp").forward(request, response);
+
+        } catch (NumberFormatException e) {
+            // Handle the exception when parsing integers
+            e.printStackTrace(); // Or log the error message
+            return;
+        } catch (Exception e) {
+            // Handle other exceptions
+            e.printStackTrace(); // Or log the error message
+            return;
+        }
+    }
+
+    public void getPendingReserve(HttpServletRequest request, HttpServletResponse response, User user) {
+        try {
+            WishList wishList = new WishList();
+            wishList.setWishEquipments(db.getReservesByStatusAndUserId("Pending", user.getId()));
+            request.setAttribute("reserves", wishList);
+            request.getRequestDispatcher("reserves.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getApprovalReserve(HttpServletRequest request, HttpServletResponse response, User user) {
+        try {
+            WishList wishList = new WishList();
+            wishList.setWishEquipments(db.getReservesByStatusAndUserId("Approved", user.getId()));
+            request.setAttribute("reserves", wishList);
+            request.getRequestDispatcher("reserves.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Sends a redirect response to the client along with a message and target URL.
+     *
+     * @param request   The HttpServletRequest object representing the client's
+     *                  request.
+     * @param response  The HttpServletResponse object representing the response to
+     *                  be sent to the client.
+     * @param message   The message to be stored in the session attribute "message".
+     * @param targetURL The target URL to which the client should be redirected.
+     * @throws IOException If an I/O error occurs while sending the redirect
+     *                     response.
+     */
     public void sendRedirectAndMessage(HttpServletRequest request, HttpServletResponse response, String message,
             String targetURL) throws IOException {
         HttpSession session = request.getSession();
@@ -227,6 +319,8 @@ public class ReserveController extends HttpServlet {
         String dbPassword = this.getServletContext().getInitParameter("dbPassword");
 
         db = new ReserveDB(dbUrl, dbUser, dbPassword);
+
+        udb = new UserDB(dbUrl, dbUser, dbPassword);
 
     }
 

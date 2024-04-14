@@ -1,6 +1,7 @@
 package ict.bean;
 
 import java.sql.Date;
+import ict.bean.CampusEquipment;
 
 public class WishEquipment {
     private int id;
@@ -13,9 +14,12 @@ public class WishEquipment {
     private String status;
     private String equipmentName;
     private String equipmentImage;
+    private int deliveryUserId;
+    private String deliveryUsername;
     private Date date;
     private String belongCampusName;
     private String destinationCampusName;
+    private CampusEquipment campusEquipment;
 
     public WishEquipment() {
     }
@@ -142,5 +146,29 @@ public class WishEquipment {
 
     public void setDestinationCampusName(String destinationCampusName) {
         this.destinationCampusName = destinationCampusName;
+    }
+
+    public CampusEquipment getCampusEquipment() {
+        return campusEquipment;
+    }
+
+    public void setCampusEquipment(CampusEquipment campusEquipment) {
+        this.campusEquipment = campusEquipment;
+    }
+
+    public int getDeliveryUserId() {
+        return deliveryUserId;
+    }
+
+    public void setDeliveryUserId(int deliveryUserId) {
+        this.deliveryUserId = deliveryUserId;
+    }
+
+    public String getDeliveryUsername() {
+        return deliveryUsername;
+    }
+
+    public void setDeliveryUsername(String deliveryUsername) {
+        this.deliveryUsername = deliveryUsername;
     }
 }

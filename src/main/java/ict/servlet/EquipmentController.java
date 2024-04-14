@@ -17,12 +17,14 @@ import ict.db.CampusEquipmentDB;
 
 import ict.bean.CampusEquipment;
 import ict.bean.CampusEquipments;
+import ict.bean.User;
+import ict.bean.UserReserve;
 
 /**
  *
  * @author User
  */
-@WebServlet(name = "EquipmentController", urlPatterns = {"/Equipment"})
+@WebServlet(name = "EquipmentController", urlPatterns = { "/Equipment" })
 public class EquipmentController extends HttpServlet {
     private CampusEquipmentDB cdb;
     private EquipmentDB ddb;
@@ -31,18 +33,21 @@ public class EquipmentController extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
         HttpSession session = request.getSession();
+        User user;
         if (session.getAttribute("user") == null) {
             response.sendRedirect("Login");
             return;
+        } else {
+            user = (User) session.getAttribute("user");
         }
 
         if ("getCampus".equalsIgnoreCase(action)) {
@@ -67,11 +72,22 @@ public class EquipmentController extends HttpServlet {
                 request.setAttribute("msg", "Campus Equipment exists.");
             }
             request.getRequestDispatcher("addCampusEquipment.jsp").forward(request, response);
-        } else if ("reserveForm".equalsIgnoreCase(action)) {
-            int id = Integer.parseInt(request.getParameter("id"));
+        } else if ("wish".equalsIgnoreCase(action)) {
+            int id;
+            try {
+                String idParam = request.getParameter("id");
+                id = Integer.parseInt(idParam);
+            } catch (Exception e) {
+                response.sendRedirect(
+                        request.getServletContext().getContextPath() + "/Equipment?action=getCampus&campus=" + user.getCampus());
+                return;
+            }
             CampusEquipment cd = cdb.getCampusEquipmentById(id);
-            request.setAttribute("equipment", cd);
-            request.getRequestDispatcher("reserveForm.jsp").forward(request, response);
+            UserReserve ur = new UserReserve(cd);
+            ur.setUserId(user.getId());
+            ur.setDestinationCampusId(user.getCampus());
+            request.setAttribute("equipment", ur);
+            request.getRequestDispatcher("Reserve").forward(request, response);
         } else if ("return".equalsIgnoreCase(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
             if (false) {
@@ -87,17 +103,18 @@ public class EquipmentController extends HttpServlet {
         } else {
             response.sendRedirect("Login");
         }
-        
+
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
+    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -108,10 +125,10 @@ public class EquipmentController extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

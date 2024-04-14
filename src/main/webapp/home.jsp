@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="js/home.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/table.css" />
 </head>
 <body>
         
@@ -16,14 +17,17 @@
         if (equipments.getCampusEquipments() != null) {
         List<CampusEquipment> campusEquipments = equipments.getCampusEquipments(); 
     %>
-    <div class="campus">Campus: 
-        <select name="campus" onchange="changeCampus(this.value)">
-            <option value="CW" <%= equipments.getCampus().equalsIgnoreCase("CW") ? "selected" : "" %>>Chai Wan</option>
-            <option value="LWL" <%= equipments.getCampus().equalsIgnoreCase("LWL") ? "selected" : "" %>>Lee Wai Lee</option>
-            <option value="ST" <%= equipments.getCampus().equalsIgnoreCase("ST") ? "selected" : "" %>>Sha Tin</option>
-            <option value="TM" <%= equipments.getCampus().equalsIgnoreCase("TM") ? "selected" : "" %>>Tuen Mun</option>
-            <option value="TY" <%= equipments.getCampus().equalsIgnoreCase("TY") ? "selected" : "" %>>Tsing Yi</option>
-        </select>
+    <div class="campus" style="display: flex; justify-content: space-between;">
+        <div>
+            Campus: 
+            <select name="campus" onchange="changeCampus(this.value)">
+                <option value="CW" <%= equipments.getCampus().equalsIgnoreCase("CW") ? "selected" : "" %>>Chai Wan</option>
+                <option value="LWL" <%= equipments.getCampus().equalsIgnoreCase("LWL") ? "selected" : "" %>>Lee Wai Lee</option>
+                <option value="ST" <%= equipments.getCampus().equalsIgnoreCase("ST") ? "selected" : "" %>>Sha Tin</option>
+                <option value="TM" <%= equipments.getCampus().equalsIgnoreCase("TM") ? "selected" : "" %>>Tuen Mun</option>
+                <option value="TY" <%= equipments.getCampus().equalsIgnoreCase("TY") ? "selected" : "" %>>Tsing Yi</option>
+            </select>
+        </div>
     </div>
     <table class="showEquipment" width="75%" height="75%" border="1">
         <tr>
@@ -44,9 +48,9 @@
                 <td><%= campusEquipment.getQuantity() %></td>
                 <td><%= campusEquipment.getStatus() %></td>
                 <% if (!campusEquipment.getCampus().equalsIgnoreCase(campus)) { %>
-                <th><a href="<%= request.getServletContext().getContextPath() %>/Equipment?action=reserveForm&id=<%= campusEquipment.getId() %>">Reserve</a></th>
+                <th><a href="<%= request.getServletContext().getContextPath() %>/Equipment?action=wish&id=<%= campusEquipment.getId() %>">Add to wish list</a></th>
                 <% } else { %>
-                <th>Damage</th>
+                <th>Damage report</th>
                 <% } %>
             </tr>
         <% }
