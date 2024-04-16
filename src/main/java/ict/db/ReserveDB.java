@@ -7,12 +7,15 @@ import java.util.List;
 
 import ict.bean.UserReserve;
 import ict.bean.WishEquipment;
+import oracle.net.aso.r;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class ReserveDB {
     private String dburl;
@@ -217,6 +220,53 @@ public class ReserveDB {
         return reserves;
     }
 
+    public List<WishEquipment> getReservesByDateAndStatus(Date date, String campus) {
+        List<WishEquipment> reserves = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT r.id, r.user_id, u.username, r.equipment_id, r.quantity, c.campus as belong_campus_id, r.destination_campus_id, "
+                +
+                "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name "
+                +
+                "FROM Reserve r " +
+                "JOIN campus_equipment c ON r.equipment_id = c.id " +
+                "JOIN equipment e ON c.equipment_id = e.id " +
+                "JOIN user u ON u.id = r.user_id " +
+                "JOIN campus cs ON cs.id = c.campus " +
+                "JOIN campus cs2 ON  cs2.id = destination_campus_id " +
+                "WHERE r.date = ? AND r.status = 'pending' and r.belong_campus_id = ?";
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setDate(1, new java.sql.Date(date.getTime()));
+            pstmt.setString(2, campus);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                reserves.add(setReserves(rs, false));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return reserves;
+    }
+
     public List<WishEquipment> getReservesByUserId(int userId) {
         List<WishEquipment> reserves = new ArrayList<>();
         Connection conn = null;
@@ -288,16 +338,16 @@ public class ReserveDB {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         String sql = "SELECT r.id, r.user_id, u.username, r.equipment_id, r.quantity, c.campus as belong_campus_id, r.destination_campus_id, "
-        +
-        "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name "
-        +
-        "FROM Reserve r " +
-        "JOIN campus_equipment c ON r.equipment_id = c.id " +
-        "JOIN equipment e ON c.equipment_id = e.id " +
-        "JOIN user u ON u.id = r.user_id " +
-        "JOIN campus cs ON cs.id = c.campus " +
-        "JOIN campus cs2 ON  cs2.id = destination_campus_id " +
-        "WHERE r.id = ?";
+                +
+                "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name "
+                +
+                "FROM Reserve r " +
+                "JOIN campus_equipment c ON r.equipment_id = c.id " +
+                "JOIN equipment e ON c.equipment_id = e.id " +
+                "JOIN user u ON u.id = r.user_id " +
+                "JOIN campus cs ON cs.id = c.campus " +
+                "JOIN campus cs2 ON  cs2.id = destination_campus_id " +
+                "WHERE r.id = ?";
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -334,23 +384,20 @@ public class ReserveDB {
         String sqlSelect = "SELECT r.id, r.user_id, u.username, r.equipment_id, r.quantity, c.campus as belong_campus_id, r.destination_campus_id, "
                 +
                 "r.status, e.name, e.image, r.date, cs.address as belong_campus_name, cs2.address as destination_campus_name ";
-        String sqlFrom =
-                "FROM Reserve r " ;
-        String sqlJoin =
-                "JOIN campus_equipment c ON r.equipment_id = c.id " +
+        String sqlFrom = "FROM Reserve r ";
+        String sqlJoin = "JOIN campus_equipment c ON r.equipment_id = c.id " +
                 "JOIN equipment e ON c.equipment_id = e.id " +
                 "JOIN user u ON u.id = r.user_id " +
                 "JOIN campus cs ON cs.id = c.campus " +
-                "JOIN campus cs2 ON  cs2.id = destination_campus_id " ;
-        String sqlWhere =
-                "WHERE r.status = ? AND r.user_id = ?";
+                "JOIN campus cs2 ON  cs2.id = destination_campus_id ";
+        String sqlWhere = "WHERE r.status = ? AND r.user_id = ?";
 
         String sql;
         if (status.equalsIgnoreCase("pending")) {
             sql = sqlSelect + sqlFrom + sqlJoin + sqlWhere;
         } else {
-            sql = sqlSelect + ", r.delivery_user_id, du.username as delivery_username " + sqlFrom + sqlJoin +  
-            "JOIN user du ON du.id = r.delivery_user_id " + sqlWhere;
+            sql = sqlSelect + ", r.delivery_user_id, du.username as delivery_username " + sqlFrom + sqlJoin +
+                    "JOIN user du ON du.id = r.delivery_user_id " + sqlWhere;
             delivery = true;
         }
         try {
@@ -385,6 +432,43 @@ public class ReserveDB {
         return reserves;
     }
 
+    public List<Date> getPendingReserveDates() {
+        List<Date> dates = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT DISTINCT r.date FROM Reserve r ";
+        String sqlWhere = "WHERE r.status = 'pending' ";
+        String sqlOrderBy = "ORDER BY r.date ASC";
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql + sqlWhere + sqlOrderBy);
+
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Date date = rs.getDate("date");
+                dates.add(date);
+            }
+        } catch (SQLException | IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return dates;
+    }
+
     public boolean deleteReserve(int reserveId) {
         boolean result = false;
         Connection conn = null;
@@ -416,16 +500,20 @@ public class ReserveDB {
         return result;
     }
 
-    public void updateReserveStatus(int reserveId, String newStatus) {
+    public boolean updateReserveStatus(int reserveId, int courierId, String newStatus) {
+        boolean result = false;
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
             conn = getConnection();
-            String sql = "UPDATE Reserve SET status = ? WHERE id = ?";
+            String sql = "UPDATE Reserve SET status = ?, delivery_user_id = ? WHERE id = ?";
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, newStatus);
-            pstmt.setInt(2, reserveId);
-            pstmt.executeUpdate();
+            pstmt.setInt(2, courierId);
+            pstmt.setInt(3, reserveId);
+            if (pstmt.executeUpdate() > 0) {
+                result = true;
+            }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {
@@ -442,6 +530,7 @@ public class ReserveDB {
                 ex.printStackTrace();
             }
         }
+        return result;
     }
 
     public WishEquipment setReserves(ResultSet rs, boolean delivery) throws SQLException {

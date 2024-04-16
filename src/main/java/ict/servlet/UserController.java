@@ -139,6 +139,7 @@ public class UserController extends HttpServlet {
         role = role.toLowerCase();
         try {
             user = new User(username, email, phone, campus, role);
+            System.out.println(user.toString());
             user.setId(id);
         } catch (IllegalArgumentException e) {
             sendRedirectAndMessage(request, response, e.getMessage(), "/home.jsp");
@@ -218,6 +219,7 @@ public class UserController extends HttpServlet {
         role = role.toLowerCase();
         try {
             user = new User(username, email, phone, campus, role);
+            System.out.println(user.toString());
         } catch (IllegalArgumentException e) {
             sendRedirectAndMessage(request, response, e.getMessage(), "/home.jsp");
             return;

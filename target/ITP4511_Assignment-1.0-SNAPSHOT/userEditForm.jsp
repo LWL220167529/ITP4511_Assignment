@@ -69,6 +69,7 @@
                             <option value="technician" <%= role.equals("technician") ? "selected" : "" %>>Technician</option>
                             <option value="staff" <%= role.equals("staff") ? "selected" : "" %>>Staff</option>
                             <option value="courier" <%= role.equals("courier") ? "selected" : "" %>>Courier</option>
+                            <option value="admin" <%= role.equals("admin") ? "selected" : "" %>>Admin</option>
                         </select>
                     </td>
                 </tr>

@@ -5,13 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reserves List</title>
     <link rel="stylesheet" href="css/table.css" />
+    <script>
+      function Reserve(action) {
+        window.location.href = "<%= request.getServletContext().getContextPath() %>/Reserve?action=" + action;
+      }
+    </script>
   </head>
   <body>
     <%@ include file="header.jsp" %>
     <%@ page import="java.util.List, ict.bean.WishEquipment" %>
     <jsp:useBean id="reserves" class="ict.bean.WishList" scope="request" />
+    <div class="reserve" style="margin-top: 20px;">
+      <div>
+        Status: 
+        <select name="action" onchange="Reserve(this.value)">
+          <option value="pending" <%= ("pending".equalsIgnoreCase(request.getParameter("action"))) ? "selected" : "" %>>Reserve</option>
+          <option value="approval" <%= ("approval".equalsIgnoreCase(request.getParameter("action"))) ? "selected" : "" %>>Approved</option>
+          <option value="list" <%= ("list".equalsIgnoreCase(request.getParameter("action"))) ? "selected" : "" %>>Borrow</option>
+        </select>
+      </div>
+      <% if (role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("Technician")) { %>
+        <div>
+          Set up courier delivery <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=setDelivery"><button>Set up</button></a>
+        </div>
+      <% } %>
+    </div>
 
-    <table border="1">
+    <table border="1" style="width: 75%;">
       <tr>
         <th>Equipment Image</th>
         <th>Username</th>
