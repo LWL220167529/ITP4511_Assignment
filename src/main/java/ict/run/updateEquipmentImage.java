@@ -7,7 +7,7 @@ public class updateEquipmentImage {
         EquipmentDB db;
         String dbUrl = "jdbc:mysql://localhost:3306/ITP4511_Assignment_DB?useSSL=false";
         String dbUser = "root";
-        String dbPassword = "root";
+        String dbPassword = "";
 
         db = new EquipmentDB(dbUrl, dbUser, dbPassword);
         

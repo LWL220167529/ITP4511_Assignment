@@ -58,7 +58,6 @@
                             <option value="Technician">Technician</option>
                             <option value="Staff">Staff</option>
                             <option value="Courier">Courier</option>
-                            <option value="admin">Admin</option>
                         </select>
                     </td>
                 </tr>

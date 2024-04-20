@@ -7,7 +7,6 @@ package ict.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpSession;
 
 import ict.bean.UserReserve;
 import ict.bean.UserReserves;
-
 import javax.servlet.ServletContext;
 import ict.bean.WishList;
 import ict.bean.WishEquipment;
@@ -26,7 +24,6 @@ import ict.bean.User;
 import ict.bean.Users;
 import ict.db.ReserveDB;
 import ict.db.UserDB;
-import oracle.net.aso.e;
 
 /**
  *
@@ -82,26 +79,15 @@ public class ReserveController extends HttpServlet {
 
         } else if ("allList".equalsIgnoreCase(action)) {
 
-            if (user.getRole().equalsIgnoreCase("admin") ||
-            user.getRole().equalsIgnoreCase("technician")) {
-                getAllReserves(request, response);
-            } else {
-                response.sendRedirect(
-                        request.getServletContext().getContextPath() + "/Equipment?action=getCampus&campus="
-                                + user.getCampus());
-            }
+            getAllReserves(request, response);
 
-        } else if ("setDelivery".equalsIgnoreCase(action)) {
-
-            setDelivery(request, response);
-
-        }else if ("delete".equalsIgnoreCase(action)) {
+        } else if ("delete".equalsIgnoreCase(action)) {
 
             int id = Integer.parseInt(request.getParameter("id"));
             db.deleteReserve(id);
             response.sendRedirect("Reserve?action=list");
 
-        } else if ("updateStatus".equalsIgnoreCase(action)) {
+        } else if ("update".equalsIgnoreCase(action)) {
 
            updateReserve(request, response);
 
@@ -122,82 +108,10 @@ public class ReserveController extends HttpServlet {
             getPendingReserve(request, response, user);
 
          
-        } else if ("updateAllStatus".equalsIgnoreCase(action)) {
-
-            updateReserves(request, response);
-
         } else {
             response.sendRedirect(
                     request.getServletContext().getContextPath() + "/Equipment?action=getCampus&campus="
                             + user.getCampus());
-        }
-    }
-
-    private void setDelivery(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            HttpSession session = request.getSession(); // Change the cast to HttpSession
-            User user;
-            if (session.getAttribute("user") == null) {
-                response.sendRedirect("Login");
-                return;
-            } else {
-                user = (User) session.getAttribute("user");
-            }
-
-            WishList wishList = new WishList();
-
-            Users users = udb.getCourier();
-            
-            Date date = request.getParameter("date") == null ? new Date(System.currentTimeMillis()) 
-                : Date.valueOf(request.getParameter("date"));
-
-            
-            List<Date> dates = db.getPendingReserveDates();
-
-            String campus = request.getParameter("campus") == null ? user.getCampus()
-                : request.getParameter("campus");
-
-            wishList.setWishEquipments(db.getReservesByDateAndStatus(date == null ? new Date(System.currentTimeMillis()) : date, campus));
-
-            request.setAttribute("users", users);
-            request.setAttribute("dates", dates);
-            request.setAttribute("campus", campus);
-            session.setAttribute("setDelivery", wishList);
-
-            request.getRequestDispatcher("reserveForm.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    
-    public void updateReserves(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            HttpSession session = request.getSession(); // Change the cast to HttpSession
-            WishList wishList = (WishList) session.getAttribute("setDelivery");
-            int courierId = Integer.parseInt(request.getParameter("Courier"));
-            String message = "";
-            String status = "Delivery";
-
-            for (WishEquipment reserve : wishList.getList()) {
-                if (db.updateReserveStatus(reserve.getId(), courierId, status)) {
-                    message += reserve.getEquipmentName() + " updated\n";
-                } else {
-                    message += reserve.getEquipmentName() + " failed\n";
-                }
-            }
-            sendRedirectAndMessage(request, response, message, "/Reserve?action=allList");
-            
-            
-
-        } catch (NumberFormatException e) {
-            // Handle the exception when parsing integers
-            e.printStackTrace(); // Or log the error message
-            return;
-        } catch (Exception e) {
-            // Handle other exceptions
-            e.printStackTrace(); // Or log the error message
-            return;
         }
     }
 
@@ -307,18 +221,10 @@ public class ReserveController extends HttpServlet {
     public void updateReserve(HttpServletRequest request, HttpServletResponse response) {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
-            int courierId = Integer.parseInt(request.getParameter("Courier"));
-            String message = "";
-            String status = "Delivery";
+            String status = request.getParameter("status");
 
-            if (db.updateReserveStatus(id, courierId, status)) {
-                message = "Reserve status updated successfully";
-                sendRedirectAndMessage(request, response, message, "/Reserve?action=allList");
-            } else {
-                message = "Failed to update reserve status";
-                sendRedirectAndMessage(request, response, message, "/Reserve?action=allList");
-            }
-            
+            db.updateReserveStatus(id, status);
+            response.sendRedirect("Reserve?action=list");
 
         } catch (NumberFormatException e) {
             // Handle the exception when parsing integers

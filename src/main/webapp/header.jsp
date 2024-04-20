@@ -31,8 +31,13 @@
       >
     </div>
     <div class="page">
+      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=list"
+        >Borrow records</a
+      >
+    </div>
+    <div class="page">
       <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=pending"
-        >records</a
+        >Reserve records</a
       >
     </div>
     <div class="page">
@@ -63,6 +68,10 @@
         >Damage</a
       >
     </div>
+    <div class="page">
+      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=approval"
+        >approval</a
+      >
     </div>
     <div class="page">
       <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=allList"

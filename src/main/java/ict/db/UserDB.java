@@ -205,15 +205,18 @@ public class UserDB {
                     + "email varchar(25),"
                     + "campus varchar(25) not null,"
                     + "role varchar(25) not null,"
-                    + "primary key (Id)"
+                    + "primary key (Id),"
                     + "FOREIGN KEY (campus) REFERENCES campus(id))";
             stmt.execute(sql);
             stmt.close();
             conn.close();
         } catch (SQLException ex) {
             while (ex != null) {
-                ex.printStackTrace();
-                ex = ex.getNextException();
+               System.out.println("SQLState: " + ex.getSQLState());
+               System.out.println("Error Code: " + ex.getErrorCode());
+               System.out.println("Message: " + ex.getMessage());
+               ex.printStackTrace();
+               ex = ex.getNextException();
             }
         } catch (IOException ex) {
             ex.printStackTrace();

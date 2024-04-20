@@ -41,6 +41,5 @@
             <hr>
             <center><button type="submit" class="registerbtn">Update</button></center>
         </div>
-    </form>
 </body>
 </html>
