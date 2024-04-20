@@ -16,6 +16,9 @@
     </head>
     <body>
         <%@ include file="header.jsp" %>
+        <% if (!"admin".equalsIgnoreCase(role)) {
+            response.sendRedirect("Equipment?action=getCampus&campus=" + headerUser.getCampus());
+        } %>
         <table class="showUser" border="1">
             <tr>
                 <th colspan="6"><a href="newUserForm.jsp">New User</a></th>
@@ -24,7 +27,7 @@
                 <th>Username</th>
                 <th>Phone</th>
                 <th>Email</th>
-                <th>Campuse</th>
+                <th>Campus</th>
                 <th>Role</th>
                 <th>Edit</th>
             </tr>

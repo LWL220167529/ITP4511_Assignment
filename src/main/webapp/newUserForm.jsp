@@ -10,11 +10,15 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>New User</title>
-        <link rel="stylesheet" type="text/css" href="css/form.css" />
+        <link rel="stylesheet" href="css/form.css">
     </head>
     <body>
         <%@ include file="header.jsp" %>
-        <form method="post" action="UserController">
+        <% if (!role.equalsIgnoreCase("admin")) {
+           
+        response.sendRedirect("Equipment?action=getCampus&campus=" + campus);
+        } %>
+        <form method="post" action="User">
             <input type="hidden" name="action" value="add">
             <table>
                 <tr>
@@ -42,6 +46,7 @@
                             <option value="ST">Sha Tin</option>
                             <option value="TM">Tuen Mun</option>
                             <option value="TY">Tsing Yi</option>
+                            <option value="CW">Other</option>
                         </select>
                     </td>
                 </tr>
@@ -53,6 +58,7 @@
                             <option value="Technician">Technician</option>
                             <option value="Staff">Staff</option>
                             <option value="Courier">Courier</option>
+                            <option value="admin">Admin</option>
                         </select>
                     </td>
                 </tr>

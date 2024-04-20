@@ -11,6 +11,15 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>User Edit Form</title>
+        <link rel="stylesheet" href="css/form.css">
+    </head>
+    
+    <body>
+        <%@ include file="header.jsp" %>
+        <% if (!role.equalsIgnoreCase("admin")) {
+           
+        response.sendRedirect("Equipment?action=getCampus&campus=" + campus);
+        } %>
         <% User user = (User) session.getAttribute("userForm"); 
             if (user == null) { 
         %>
@@ -22,12 +31,7 @@
         <%
             } else {
         %>
-        <link rel="stylesheet" type="text/css" href="css/form.css" />
-    </head>
-    
-    <body>
-        <%@ include file="header.jsp" %>
-        <form method="post" action="UserController">
+        <form method="post" action="User">
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="id" value="<%= user.getId() %>">
             <table>
@@ -46,7 +50,7 @@
                 <tr>
                     <td>Campus:</td>
                     <td>
-                        <% String campus = user.getCampus(); %>
+                        <% campus = user.getCampus(); %>
                         <select name="campus" id="campus">
                             <option value="CW" <%= campus.equals("CW") ? "selected" : "" %>>Chai Wan</option>
                             <option value="LWL" <%= campus.equals("LWL") ? "selected" : "" %>>Lee Wai Lee </option>
@@ -65,6 +69,7 @@
                             <option value="technician" <%= role.equals("technician") ? "selected" : "" %>>Technician</option>
                             <option value="staff" <%= role.equals("staff") ? "selected" : "" %>>Staff</option>
                             <option value="courier" <%= role.equals("courier") ? "selected" : "" %>>Courier</option>
+                            <option value="admin" <%= role.equals("admin") ? "selected" : "" %>>Admin</option>
                         </select>
                     </td>
                 </tr>
