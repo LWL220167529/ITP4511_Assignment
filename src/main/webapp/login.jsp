@@ -13,6 +13,7 @@
         }
         td {
             padding: 5px;
+            text-align: center;
         }
         label {
             display: inline-block;
@@ -22,14 +23,26 @@
     </style>
 </head>
 <body>
+    <%@ page import="ict.bean.User" %>
     <% if (request.getAttribute("error") != null) { %>
         <p style="color: red;"><%= request.getAttribute("error") %></p>
     <% } %>
     <% if (session.getAttribute("user") != null) { 
-        response.sendRedirect("home.jsp");
-    } %>
+        User user = (User) session.getAttribute("user");
+        if (user.getRole().equals("courier")) {
+            response.sendRedirect("delivery.jsp");
+        } else {
+            response.sendRedirect("Equipment?action=getCampus&campus=" + user.getCampus());
+        }
+    } 
+    String message =
+    (String) session.getAttribute("error"); if (message != null) { %>
+    <script>
+      alert("<%=message%>");
+    </script>
+    <% session.removeAttribute("error"); } %>
     <h1>Welcome to Hong Kong Institute of Professional Education</h1>
-    <form action="LoginController" method="post">
+    <form action="Login" method="post">
         <input type="hidden" name="action" value="authenticate">
         <table>
             <tr>
@@ -41,7 +54,7 @@
                 <td><input type="password" id="password" name="password"></td>
             </tr>
             <tr>
-                <td colspan="2"><center><input type="submit" value="Login"></center></td>
+                <td colspan="2"><input type="submit" value="Login"></td>
             </tr>
         </table>
     </form>

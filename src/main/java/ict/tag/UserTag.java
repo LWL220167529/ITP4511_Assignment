@@ -47,14 +47,13 @@ public class UserTag extends SimpleTagSupport {
             } else if ("table".equalsIgnoreCase(tagType)) {
                 // display the list format
                 for (User user : users) {
-                    System.out.println(user.getId());
                     out.println("<tr>" +
                     "<td>" + user.getUsername() + "</td>" +
                     "<td>" + user.getPhone() + "</td>" +
                     "<td>" + user.getEmail() + "</td>" +
-                    "<td>" + setCampus(user.getCampus()) + "</td>" +
+                    "<td>" + ("courier".equalsIgnoreCase(user.getRole()) ? "" : setCampus(user.getCampus())) + "</td>" +
                     "<td>" + user.getRole() + "</td>" +
-                    "<td><form method=\"post\" action=\"UserController\">" +
+                    "<td><form method=\"post\" action=\"User\">" +
                     "<input type=\"hidden\" name=\"action\" value=\"edit\">" +
                     "<input type=\"hidden\" name=\"id\" value=\"" + user.getId() + "\">" +
                     "<input type=\"submit\" value=\"Edit\">" +

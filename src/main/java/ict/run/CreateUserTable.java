@@ -18,7 +18,7 @@ public class CreateUserTable {
 
         db = new UserDB(dbUrl, dbUser, dbPassword);
         System.out.println("Creating user table");
-        db.CreateUserTable();
+        db.createUserTable();
         System.out.println("User table created");
     }
 }

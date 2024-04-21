@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ict.bean.User;
+import ict.bean.Users;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -139,28 +140,28 @@ public class UserDB {
     }
 
     public String [] isValidUser(String user, String pwd) {
-        String [] isValid = new String[4];
+        String [] isValid = new String[2];
         isValid[0] = "false";
         Connection conn = null;
         PreparedStatement stmt = null;
         String preQueryStatement = "SELECT * FROM user WHERE "
-                + "username=? or email=? or phone=? and password=?";
+                + "username=? and password=? or email=? and password=? or phone=? and password=?";
         // 2. get the prepare Statement
         try {
             conn = getConnection();
             stmt = conn.prepareStatement(preQueryStatement);
             // 3. update the placeholders with username and pwd
             stmt.setString(1, user);
-            stmt.setString(2, user);
+            stmt.setString(2, pwd);
             stmt.setString(3, user);
             stmt.setString(4, pwd);
+            stmt.setString(5, user);
+            stmt.setString(6, pwd);
             // 4. execute the query and assign to the result
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 isValid[0] = "true";
-                isValid[1] = rs.getString("username");
-                isValid[2] = rs.getString("role");
-                isValid[3] = rs.getString("campus");
+                isValid[1] = String.valueOf(rs.getInt("id")); // Convert integer to string
             }
 
             return isValid;
@@ -190,7 +191,7 @@ public class UserDB {
         }
     }
 
-    public void CreateUserTable() {
+    public void createUserTable() {
         Statement stmt = null;
         Connection conn = null;
         try {
@@ -205,7 +206,7 @@ public class UserDB {
                     + "campus varchar(25) not null,"
                     + "role varchar(25) not null,"
                     + "primary key (Id)"
-                    + ")";
+                    + "FOREIGN KEY (campus) REFERENCES campus(id))";
             stmt.execute(sql);
             stmt.close();
             conn.close();
@@ -355,5 +356,53 @@ public class UserDB {
         }
     }
 
+    public Users getCourier() {
+        Users users = new Users();
+        List<User> User = null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
 
+        try {
+            User = new ArrayList<>();
+            conn = getConnection();
+            String sql = "select * from user where role = 'courier';";
+            pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPhone(rs.getString("phone"));
+                user.setEmail(rs.getString("email"));
+                user.setCampus(rs.getString("campus"));
+                user.setRole(rs.getString("role"));
+                User.add(user);
+            }
+            rs.close();
+            users.setUsers(User);
+        } catch (SQLException ex) {
+            while (ex != null) {
+                ex.printStackTrace();
+                ex = ex.getNextException();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                while (ex != null) {
+                    ex.printStackTrace();
+                    ex = ex.getNextException();
+                }
+            }
+        }
+        
+        return users;
+    }
 }

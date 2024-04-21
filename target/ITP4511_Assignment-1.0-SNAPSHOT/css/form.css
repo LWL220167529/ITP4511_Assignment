@@ -6,7 +6,7 @@ form {
     height: 100vh;
 }
 
-td label {
+label {
     display: block;
     text-align: right;
 }

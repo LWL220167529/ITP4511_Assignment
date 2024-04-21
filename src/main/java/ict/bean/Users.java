@@ -24,4 +24,8 @@ public class Users {
     public List<User> getList() {
         return users;
     }
+
+    public boolean listIsEmpty() {
+        return users.isEmpty();
+    }
 }

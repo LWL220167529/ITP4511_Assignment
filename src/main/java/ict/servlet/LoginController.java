@@ -7,6 +7,7 @@ package ict.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,7 +22,7 @@ import ict.db.UserDB;
  *
  * @author User
  */
-@WebServlet(name = "LoginController", urlPatterns = { "/LoginController" })
+@WebServlet(name = "LoginController", urlPatterns = { "/Login" })
 public class LoginController extends HttpServlet {
     private UserDB udb;
 
@@ -38,7 +39,6 @@ public class LoginController extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -87,16 +87,19 @@ public class LoginController extends HttpServlet {
             doAuthenticate(request, response);
             return;
         } else {
+
             doLogout(request, response);
             return;
         }
-        //   else {
-        //     response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+        // else {
+        // response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
         // }
     }
 
     private void doLogout(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        ServletContext context = getServletContext();
+        context.removeAttribute("reserves");
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.removeAttribute("user");
@@ -125,7 +128,6 @@ public class LoginController extends HttpServlet {
 
     private void doAuthenticate(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // TODO Auto-generated method stub
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -133,17 +135,20 @@ public class LoginController extends HttpServlet {
         String[] isValid = udb.isValidUser(username, password);
         HttpSession session = request.getSession(true);
 
-        if (Boolean.parseBoolean(isValid[0])) {
-            User bean = new User();
-            bean.setUsername(isValid[1]);
-            bean.setRole(isValid[2]);
-            bean.setCampus(isValid[3]);
+        if (Boolean.valueOf(isValid[0])) {
+            User bean = udb.getUserById(Integer.parseInt(isValid[1]));
             session.setAttribute("user", bean);
-            targetURL = getServletContext().getContextPath() + "/DeviceController?action=getCampus&campus=" + bean.getCampus();
+            if (bean.getRole().equals("courier")) {
+                targetURL = getServletContext().getContextPath() + "/delivery.jsp";
+            } else {
+                targetURL = getServletContext().getContextPath() + "/Equipment?action=getCampus&campus="
+                        + bean.getCampus();
+            }
         } else {
             String error = "Invalid login. Please try again.";
             session.setAttribute("error", error);
-            targetURL = getServletContext().getContextPath(); // Fix: Call getContextPath() method to get the context path as a string
+            targetURL = getServletContext().getContextPath(); // Fix: Call getContextPath() method to get the context
+                                                              // path as a string
         }
         response.sendRedirect(targetURL);
         return;

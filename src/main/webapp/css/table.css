@@ -1,9 +1,14 @@
 table {
     margin: auto;
     margin-top: 1%;
+    width: 75%;
 }
 
 h1 {
+    text-align: center;
+}
+
+td {
     text-align: center;
 }
 
@@ -11,4 +16,11 @@ h1 {
     margin: auto;
     width: 75%;
     text-align: right;
+}
+
+.reserve {
+    display: flex;
+    width: 75%;
+    justify-content: space-between;
+    margin: auto;
 }
