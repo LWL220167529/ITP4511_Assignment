@@ -41,12 +41,12 @@
       >
     </div>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/viewCheckOut.jsp"
+      <a href="<%= request.getServletContext().getContextPath() %>/checkOut.jsp"
         >Check-out</a
       >
     </div>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/checkin.jsp"
+      <a href="<%= request.getServletContext().getContextPath() %>/checkIn.jsp"
         >Check-In</a
       >
     </div>
