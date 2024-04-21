@@ -41,13 +41,13 @@
       >
     </div>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
+      <a href="<%= request.getServletContext().getContextPath() %>/viewCheckOut.jsp"
         >Check-out</a
       >
     </div>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
-        >Return-equipment</a
+      <a href="<%= request.getServletContext().getContextPath() %>/checkin.jsp"
+        >Check-In</a
       >
     </div>
     <% if (role.equalsIgnoreCase("staff")) { %>

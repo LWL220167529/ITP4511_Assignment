@@ -9,6 +9,7 @@ public class CheckIn {
     private int equipmentId;
     private String campusId;
     private Date checkInDate;
+    private String damageReport;
     private String status;
     // Additional fields can be added as required
     
@@ -17,13 +18,14 @@ public class CheckIn {
     }
 
     // Constructor with all fields
-    public CheckIn(int checkInId, int userId, int reserveID,int equipmentId, String campusId, Date checkInDate, String status) {
+    public CheckIn(int checkInId, int userId, int reserveID,int equipmentId, String campusId, Date checkInDate, String status, String damageReport) {
         this.checkInId = checkInId;
         this.userId = userId;
         this.reserveID = reserveID;
         this.equipmentId = equipmentId;
         this.campusId = campusId;
         this.checkInDate = checkInDate;
+        this.damageReport = damageReport ;
         this.status = status;
     }
 
@@ -68,6 +70,9 @@ public class CheckIn {
         this.checkInDate = checkInDate;
     }
 
+    public String getDamageReport() {
+        return damageReport;
+    }
 
     public String getStatus() {
         return status;
@@ -84,7 +89,8 @@ public class CheckIn {
                ", userId=" + userId +
                ", equipmentId=" + equipmentId +
                ", campusId='" + campusId + '\'' +
-               ", checkInDate=" + checkInDate +
+               ", checkInDate=" + checkInDate + '\'' +
+               ", damageReport=" + damageReport + '\'' +
                ", status='" + status + '\'' +
                '}';
     }
