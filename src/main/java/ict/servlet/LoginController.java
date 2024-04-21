@@ -87,12 +87,12 @@ public class LoginController extends HttpServlet {
             doAuthenticate(request, response);
             return;
         } else {
-            
+
             doLogout(request, response);
             return;
         }
-        //   else {
-        //     response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+        // else {
+        // response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
         // }
     }
 
@@ -138,11 +138,17 @@ public class LoginController extends HttpServlet {
         if (Boolean.valueOf(isValid[0])) {
             User bean = udb.getUserById(Integer.parseInt(isValid[1]));
             session.setAttribute("user", bean);
-            targetURL = getServletContext().getContextPath() + "/Equipment?action=getCampus&campus=" + bean.getCampus();
+            if (bean.getRole().equals("courier")) {
+                targetURL = getServletContext().getContextPath() + "/delivery.jsp";
+            } else {
+                targetURL = getServletContext().getContextPath() + "/Equipment?action=getCampus&campus="
+                        + bean.getCampus();
+            }
         } else {
             String error = "Invalid login. Please try again.";
             session.setAttribute("error", error);
-            targetURL = getServletContext().getContextPath(); // Fix: Call getContextPath() method to get the context path as a string
+            targetURL = getServletContext().getContextPath(); // Fix: Call getContextPath() method to get the context
+                                                              // path as a string
         }
         response.sendRedirect(targetURL);
         return;

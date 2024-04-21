@@ -83,7 +83,7 @@ public class ReserveController extends HttpServlet {
         } else if ("allList".equalsIgnoreCase(action)) {
 
             if (user.getRole().equalsIgnoreCase("admin") ||
-            user.getRole().equalsIgnoreCase("technician")) {
+            user.getRole().equalsIgnoreCase("technician") || user.getRole().equalsIgnoreCase("staff")) {
                 getAllReserves(request, response);
             } else {
                 response.sendRedirect(
@@ -95,23 +95,48 @@ public class ReserveController extends HttpServlet {
 
             setDelivery(request, response);
 
-        }else if ("delete".equalsIgnoreCase(action)) {
+        }else if ("cancel".equalsIgnoreCase(action)) {
 
-            int id = Integer.parseInt(request.getParameter("id"));
-            db.deleteReserve(id);
-            response.sendRedirect("Reserve?action=list");
+            if (user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("technician")) {
+
+            try {
+                int id = Integer.parseInt(request.getParameter("id"));
+                db.cancelReserve(id);
+                response.sendRedirect("Reserve?action=list");
+            } catch (NumberFormatException e) {
+                // Handle the exception if the parameter "id" cannot be parsed as an integer
+                e.printStackTrace();
+            } catch (Exception e) {
+                // Handle other exceptions that may occur during the cancellation process
+                e.printStackTrace();
+            }
+            } else {
+                response.sendRedirect(
+                        request.getServletContext().getContextPath());
+            }
 
         } else if ("updateStatus".equalsIgnoreCase(action)) {
 
-           updateReserve(request, response);
+            if (user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("technician")) {
+                updateReserve(request, response);
+            } else {
+                response.sendRedirect(
+                        request.getServletContext().getContextPath());
+            }
+
 
         } else if ("reserve".equalsIgnoreCase(action)) {
 
             addReserve(request, response, message, user);
 
         } else if ("form".equalsIgnoreCase(action)) {
-
-            getReserveStatus(request, response); 
+            if (user.getRole().equalsIgnoreCase("admin") || user.getRole().equalsIgnoreCase("technician")) {
+                request.getRequestDispatcher("reserveForm.jsp").forward(request, response);
+            } else {
+                response.sendRedirect(
+                        request.getServletContext().getContextPath() + "/Equipment?action=getCampus&campus="
+                                + user.getCampus());
+            }
         } else if ("approval".equalsIgnoreCase(action)) {
 
             getApprovalReserve(request, response, user);
@@ -309,7 +334,7 @@ public class ReserveController extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             int courierId = Integer.parseInt(request.getParameter("Courier"));
             String message = "";
-            String status = "Delivery";
+            String status = "Approved";
 
             if (db.updateReserveStatus(id, courierId, status)) {
                 message = "Reserve status updated successfully";

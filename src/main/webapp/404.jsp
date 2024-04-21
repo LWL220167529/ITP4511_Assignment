@@ -12,6 +12,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <center><img width="75%" src="http://travelmen.org/static/images/404.png"></center>
+        <h1>404 - Page Not Found</h1>
+        <p>The requested page could not be found.</p>
     </body>
 </html>

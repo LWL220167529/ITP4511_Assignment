@@ -25,4 +25,8 @@ public class CampusEquipments {
     public String getCampus() {
         return campus;
     }
+
+    public boolean listIsEmpty() {
+        return campusEquipments.isEmpty();
+    }
 }

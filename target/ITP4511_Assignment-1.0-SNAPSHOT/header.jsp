@@ -15,11 +15,11 @@
     if (headerUser != null) { role = headerUser.getRole(); campus = headerUser.getCampus(); } %>
     <div class="page" style="margin-left: 5%">
       <a
-        href="<%= request.getServletContext().getContextPath() %>/Equipment?action=getCampus&campus=<%= campus %>"
+        href="<%= request.getServletContext().getContextPath() %>"
         >Home</a
       >
     </div>
-    <% if (role.equalsIgnoreCase("user") || role.equalsIgnoreCase("staff") || role.equalsIgnoreCase("admin")) { %>
+    <% if (role.equalsIgnoreCase("user") || role.equalsIgnoreCase("staff") || role.equalsIgnoreCase("technician") || role.equalsIgnoreCase("admin")) { %>
     <div class="page">
       <a href="<%= request.getServletContext().getContextPath() %>/wishList.jsp"
         >Wish List</a
@@ -31,8 +31,8 @@
       >
     </div>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=pending"
-        >records</a
+      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=list"
+        >Records</a
       >
     </div>
     <div class="page">
@@ -56,7 +56,15 @@
         >Reserves</a
       >
     </div>
-    <% } %> <% } %> <% if (role.equalsIgnoreCase("admin") ||
+    <% } %> <% } %> 
+    <% if (role.equalsIgnoreCase("courier")) { %>
+    <div class="page">
+      <a href="<%= request.getServletContext().getContextPath() %>/delivery.jsp"
+        >Delivery</a
+      >
+    </div>
+    <% } %>
+    <% if (role.equalsIgnoreCase("admin") ||
     role.equalsIgnoreCase("technician")) { %>
     <div class="page">
       <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"

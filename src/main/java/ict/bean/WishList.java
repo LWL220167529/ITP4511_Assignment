@@ -42,4 +42,8 @@ public class WishList {
     public int getUserId() {
         return userId;
     }
+
+    public boolean listIsEmpty() {
+        return wishEquipments.isEmpty();
+    }
 }

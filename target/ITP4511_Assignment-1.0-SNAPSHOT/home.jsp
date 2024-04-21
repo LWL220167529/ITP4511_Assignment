@@ -14,7 +14,7 @@
     <h1>Campus Equipments</h1>
     <jsp:useBean id="equipments" class="ict.bean.CampusEquipments" scope="request" />
     <% 
-        if (equipments.getCampusEquipments() != null) {
+        if (equipments != null && !equipments.listIsEmpty()) {
         List<CampusEquipment> campusEquipments = equipments.getCampusEquipments(); 
     %>
     <div class="campus" style="display: flex; justify-content: space-between;">
@@ -54,6 +54,8 @@
                 <% } %>
             </tr>
         <% }
+    } else {
+        response.sendRedirect(request.getServletContext().getContextPath());
     } %>
     </table>
 </body>

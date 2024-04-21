@@ -45,7 +45,7 @@
         <th colspan="<%= (role.equalsIgnoreCase("Technician") || role.equalsIgnoreCase("admin"))? "2" : "1" %>">Action</th>
       </tr>
       <% 
-        if (reserves == null) {
+        if (reserves.listIsEmpty() && !"pending".equalsIgnoreCase(request.getParameter("action"))) {
             response.sendRedirect(
                     request.getServletContext().getContextPath() + "/Equipment?action=getCampus&campus=" + campus);
           return;
@@ -74,7 +74,7 @@
               </td >
               <td>
               <% } %>
-                <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=updateStatus&id=<%= wishEquipment.getId() %>">Remove</a>
+                <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=cancel&id=<%= wishEquipment.getId() %>">cancel</a>
             <% } %>
           </td>
         </tr>

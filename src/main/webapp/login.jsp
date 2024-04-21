@@ -29,7 +29,11 @@
     <% } %>
     <% if (session.getAttribute("user") != null) { 
         User user = (User) session.getAttribute("user");
-        response.sendRedirect("Equipment?action=getCampus&campus=" + user.getCampus());
+        if (user.getRole().equals("courier")) {
+            response.sendRedirect("delivery.jsp");
+        } else {
+            response.sendRedirect("Equipment?action=getCampus&campus=" + user.getCampus());
+        }
     } 
     String message =
     (String) session.getAttribute("error"); if (message != null) { %>

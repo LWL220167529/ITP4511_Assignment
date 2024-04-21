@@ -469,7 +469,7 @@ public class ReserveDB {
         return dates;
     }
 
-    public boolean deleteReserve(int reserveId) {
+    public boolean cancelReserve(int reserveId) {
         boolean result = false;
         Connection conn = null;
         PreparedStatement pstmt = null;
