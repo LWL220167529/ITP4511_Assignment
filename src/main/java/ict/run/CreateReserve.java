@@ -1,5 +1,6 @@
 package ict.run;
 
+import ict.db.Database;
 import ict.db.ReserveDB;
 
 public class CreateReserve {
@@ -9,7 +10,9 @@ public class CreateReserve {
         String dbUser = "root";
         String dbPassword = "root";
 
-        db = new ReserveDB(dbUrl, dbUser, dbPassword);
+        Database database = new Database(dbUrl, dbUser, dbPassword);
+
+        db = new ReserveDB(database);
         
         db.createReserveTable();
 

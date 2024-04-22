@@ -19,6 +19,17 @@
             form.submit();
         }
     </script>
+    <style>
+        h1 {
+            text-align: center;
+        }
+        .null {
+            display: block;
+            width: 100px;
+            margin: auto;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <%@ include file="header.jsp" %>
@@ -28,6 +39,10 @@
     <jsp:useBean id="users" class="ict.bean.Users" scope="request" />
     <jsp:useBean id="dates" class="java.util.List" scope="request" />
     <% String selectedDate = request.getParameter("date"); %>
+    <% if (dates == null || dates.isEmpty()) { %>
+        <h1>No delivery available</h1>
+    <a class="null" href="<%= request.getServletContext().getContextPath() %>">Back</a>
+    <% } else { %>
     <div style="
     display: flex;
     width: 75%;
@@ -107,5 +122,6 @@
             <center><button type="submit" class="registerbtn">Update</button></center>
         </div>
     </form>
+    <% } %>
 </body>
 </html>

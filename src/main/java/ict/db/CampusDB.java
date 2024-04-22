@@ -12,24 +12,14 @@ import java.sql.SQLException;
 
 public class CampusDB {
     
-    private String dburl;
-    private String dbUser;
-    private String dbPassword;
+    private Database db;
 
-    public CampusDB(String dburl, String dbUser, String dbPassword) {
-        this.dburl = dburl;
-        this.dbUser = dbUser;
-        this.dbPassword = dbPassword;
+    public CampusDB(Database db) {
+        this.db = db;
     }
 
     public Connection getConnection() throws SQLException, IOException {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-
-        return DriverManager.getConnection(dburl, dbUser, dbPassword);
+        return db.getConnection();
     }
     
     public void createCampusTable() {

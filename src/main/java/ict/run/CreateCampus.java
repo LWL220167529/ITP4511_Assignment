@@ -1,6 +1,7 @@
 package ict.run;
 
 import ict.db.CampusDB;
+import ict.db.Database;
 
 public class CreateCampus {
     public static void main(String[] args) {
@@ -9,7 +10,9 @@ public class CreateCampus {
         String dbUser = "root";
         String dbPassword = "root";
 
-        db = new CampusDB(dbUrl, dbUser, dbPassword);
+        Database database = new Database(dbUrl, dbUser, dbPassword);
+
+        db = new CampusDB(database);
 
         db.createCampusTable();
 

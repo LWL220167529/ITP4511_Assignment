@@ -1,5 +1,6 @@
 package ict.run;
 
+import ict.db.Database;
 import ict.db.EquipmentDB;
 
 public class CreateEquipmentTable {
@@ -9,7 +10,9 @@ public class CreateEquipmentTable {
         String dbUser = "root";
         String dbPassword = "root";
 
-        db = new EquipmentDB(dbUrl, dbUser, dbPassword);
+        Database database = new Database(dbUrl, dbUser, dbPassword);
+
+        db = new EquipmentDB(database);
 
         db.createEquipmentTable();
 
