@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import ict.db.EquipmentDB;
 import ict.db.CampusEquipmentDB;
-
+import ict.db.Database;
 import ict.bean.CampusEquipment;
 import ict.bean.CampusEquipments;
 import ict.bean.User;
@@ -152,9 +152,11 @@ public class EquipmentController extends HttpServlet {
         String dbUser = this.getServletContext().getInitParameter("dbUser");
         String dbPassword = this.getServletContext().getInitParameter("dbPassword");
 
-        cdb = new CampusEquipmentDB(dbUrl, dbUser, dbPassword);
+        Database database = new Database(dbUrl, dbUser, dbPassword);
 
-        ddb = new EquipmentDB(dbUrl, dbUser, dbPassword);
+        cdb = new CampusEquipmentDB(database);
+
+        ddb = new EquipmentDB(database);
 
     }
 

@@ -18,6 +18,7 @@ ict\bean\Equipment.class
 ict\bean\WishEquipment.class
 ict\db\CampusDB.class
 ict\bean\User.class
+ict\db\Database.class
 ict\db\EquipmentDB.class
 ict\db\DeliveryDB.class
 ict\run\CreateReserve.class

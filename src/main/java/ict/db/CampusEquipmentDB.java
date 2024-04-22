@@ -15,24 +15,10 @@ import java.sql.ResultSet;
 
 public class CampusEquipmentDB {
 
-    private String dburl;
-    private String dbUser;
-    private String dbPassword;
+    private Database db;
 
-    public CampusEquipmentDB(String dburl, String dbUser, String dbPassword) {
-        this.dburl = dburl;
-        this.dbUser = dbUser;
-        this.dbPassword = dbPassword;
-    }
-
-    public Connection getConnection() throws SQLException, IOException {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-
-        return DriverManager.getConnection(dburl, dbUser, dbPassword);
+    public CampusEquipmentDB(Database db) {
+        this.db = db;
     }
 
     public boolean createCampusEquipmentTable() {
@@ -45,7 +31,7 @@ public class CampusEquipmentDB {
                 "status VARCHAR(255), " +
                 "FOREIGN KEY (campus) REFERENCES campus(Id), " +
                 "FOREIGN KEY (equipment_id) REFERENCES equipment(id))";
-        try (Connection con = getConnection();
+        try (Connection con = db.getConnection();
                 Statement stmt = con.createStatement()) {
             stmt.execute(sql);
             created = true;
@@ -62,7 +48,7 @@ public class CampusEquipmentDB {
         String sql = "SELECT ad.id, ad.equipment_id, d.name, d.image, ad.campus, ad.quantity, ad.status " +
                 "FROM campus_equipment ad " +
                 "JOIN equipment d ON ad.equipment_id = d.id";
-        try (Connection con = getConnection();
+        try (Connection con = db.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -90,7 +76,7 @@ public class CampusEquipmentDB {
                 "FROM campus_equipment ad " +
                 "JOIN equipment d ON ad.equipment_id = d.id " +
                 "WHERE ad.id = ?";
-        try (Connection con = getConnection();
+        try (Connection con = db.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -119,7 +105,7 @@ public class CampusEquipmentDB {
                 "FROM campus_equipment ad " +
                 "JOIN equipment d ON ad.equipment_id = d.id " +
                 "WHERE ad.campus = ?";
-        try (Connection con = getConnection();
+        try (Connection con = db.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, campus);
             try (ResultSet rs = ps.executeQuery()) {
@@ -147,7 +133,7 @@ public class CampusEquipmentDB {
         boolean added = false;
         String sql = "INSERT INTO campus_equipment (equipment_id, campus, quantity, status) " +
                 "VALUES (?, ?, ?, ?)";
-        try (Connection con = getConnection();
+        try (Connection con = db.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, campusEquipment.getEquipmentId());
             ps.setString(2, campusEquipment.getCampus());
@@ -169,7 +155,7 @@ public class CampusEquipmentDB {
     public boolean updateStatusForQuantityLessThanOne() {
         boolean updated = false;
         String sql = "SELECT id, quantity FROM campus_equipment WHERE quantity < 1";
-        try (Connection con = getConnection();
+        try (Connection con = db.getConnection();
                 PreparedStatement ps = con.prepareStatement(sql);
                 ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {

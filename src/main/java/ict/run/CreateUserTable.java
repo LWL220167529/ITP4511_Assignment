@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package ict.run;
+import ict.db.Database;
 import ict.db.UserDB;
 
 /**
@@ -16,7 +17,9 @@ public class CreateUserTable {
         String dbUser = "root"; 
         String dbPassword = "root"; 
 
-        db = new UserDB(dbUrl, dbUser, dbPassword);
+        Database database = new Database(dbUrl, dbUser, dbPassword);
+
+        db = new UserDB(database);
         System.out.println("Creating user table");
         db.createUserTable();
         System.out.println("User table created");

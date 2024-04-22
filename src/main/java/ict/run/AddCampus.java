@@ -2,6 +2,7 @@ package ict.run;
 
 import ict.bean.Campus;
 import ict.db.CampusDB;
+import ict.db.Database;
 
 public class AddCampus {
     public static void main(String[] args) {
@@ -12,7 +13,9 @@ public class AddCampus {
         String dbUser = "root";
         String dbPassword = "root";
 
-        db = new CampusDB(dbUrl, dbUser, dbPassword);
+        Database database = new Database(dbUrl, dbUser, dbPassword);
+
+        db = new CampusDB(database);
 
         for (int i = 0; i < defaultCampus.length; i++) {
             Campus campus = new Campus(defaultCampus[i], defaultCampusName[i]);

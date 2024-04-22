@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import ict.bean.User;
+import ict.db.Database;
 import ict.db.UserDB;
 
 /**
@@ -139,7 +140,7 @@ public class LoginController extends HttpServlet {
             User bean = udb.getUserById(Integer.parseInt(isValid[1]));
             session.setAttribute("user", bean);
             if (bean.getRole().equals("courier")) {
-                targetURL = getServletContext().getContextPath() + "/delivery.jsp";
+                targetURL = getServletContext().getContextPath() + "/Reserve?action=delivery";
             } else {
                 targetURL = getServletContext().getContextPath() + "/Equipment?action=getCampus&campus="
                         + bean.getCampus();
@@ -170,7 +171,9 @@ public class LoginController extends HttpServlet {
         String dbUser = this.getServletContext().getInitParameter("dbUser");
         String dbPassword = this.getServletContext().getInitParameter("dbPassword");
 
-        udb = new UserDB(dbUrl, dbUser, dbPassword);
+        Database database = new Database(dbUrl, dbUser, dbPassword);
+
+        udb = new UserDB(database);
 
     }
 }

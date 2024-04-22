@@ -24,24 +24,15 @@ import java.sql.ResultSet;
  */
 public class UserDB {
     
-    private String dburl;
-    private String dbUser;
-    private String dbPassword;
+    private Database db;
 
-    public UserDB(String dburl, String dbUser, String dbPassword) {
-        this.dburl = dburl;
-        this.dbUser = dbUser;
-        this.dbPassword = dbPassword;
+    public UserDB(Database db) {
+        this.db = db;
     }
 
     public Connection getConnection() throws SQLException, IOException {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
 
-        return DriverManager.getConnection(dburl, dbUser, dbPassword);
+        return db.getConnection();
     }
 
     public List<User> getUsers(){

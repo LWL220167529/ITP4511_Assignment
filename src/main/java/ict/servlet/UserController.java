@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import ict.bean.User;
+import ict.db.Database;
 import ict.db.UserDB;
 
 /**
@@ -254,7 +255,9 @@ public class UserController extends HttpServlet {
         String dbUser = this.getServletContext().getInitParameter("dbUser");
         String dbPassword = this.getServletContext().getInitParameter("dbPassword");
 
-        db = new UserDB(dbUrl, dbUser, dbPassword);
+        Database database = new Database(dbUrl, dbUser, dbPassword);
+
+        db = new UserDB(database);
 
     }
 }

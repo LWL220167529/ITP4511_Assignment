@@ -2,6 +2,7 @@ package ict.run;
 
 import ict.bean.CampusEquipment;
 import ict.db.CampusEquipmentDB;
+import ict.db.Database;
 import ict.db.EquipmentDB;
 
 import java.util.Random;
@@ -17,9 +18,11 @@ public class AddCampusEquipment {
         String dbUser = "root";
         String dbPassword = "root";
 
-        cddb = new CampusEquipmentDB(dbUrl, dbUser, dbPassword);
+        Database db = new Database(dbUrl, dbUser, dbPassword);
 
-        ddb = new EquipmentDB(dbUrl, dbUser, dbPassword);
+        cddb = new CampusEquipmentDB(db);
+
+        ddb = new EquipmentDB(db);
 
         int [] EquipmentIds;
 

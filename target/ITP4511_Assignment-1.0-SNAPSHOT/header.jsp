@@ -1,5 +1,4 @@
 <%@ page import="ict.bean.User" %>
-<html>
   <link rel="stylesheet" type="text/css" href="css/header.css" />
   <% User headerUser = (User) session.getAttribute("user"); if (headerUser ==
   null) { response.sendRedirect("Login"); return; }  String message =
@@ -100,4 +99,3 @@
       >
     </div>
   </nav>
-</html>
