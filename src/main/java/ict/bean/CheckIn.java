@@ -7,31 +7,73 @@ public class CheckIn {
     private int userId;
     private int reserveID;
     private int equipmentId;
+    private String image;
     private String campusId;
     private Date checkInDate;
     private String damageReport;
-    private String status;
+    private boolean confirmedCheckIn;
+    private boolean confirmedDamage;
+    private boolean deleted;
     // Additional fields can be added as required
+
+    public int getReserveID() {
+        return reserveID;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
     
     // Default constructor
     public CheckIn() {
     }
 
     // Constructor with all fields
-    public CheckIn(int checkInId, int userId, int reserveID,int equipmentId, String campusId, Date checkInDate, String status, String damageReport) {
+    public CheckIn(int checkInId, int userId, int reserveID,int equipmentId, String campusId, String image, Date checkInDate, boolean confirmedCheckIn, String damageReport, boolean deleted,boolean confirmedDamage) {
         this.checkInId = checkInId;
         this.userId = userId;
         this.reserveID = reserveID;
         this.equipmentId = equipmentId;
+        this.image = image;
         this.campusId = campusId;
         this.checkInDate = checkInDate;
         this.damageReport = damageReport ;
-        this.status = status;
+        this.confirmedCheckIn = confirmedCheckIn;
+        this.deleted = deleted;
+        this.confirmedDamage = confirmedDamage;
+    }
+
+    public boolean isConfirmedDamage() {
+        return confirmedDamage;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setConfirmedDamage(boolean confirmedDamage) {
+        this.confirmedDamage = confirmedDamage;
     }
 
     // Getters and setters
     public int getCheckInId() {
         return checkInId;
+    }
+
+    public void setReserveID(int reserveID) {
+        this.reserveID = reserveID;
+    }
+
+    public void setDamageReport(String damageReport) {
+        this.damageReport = damageReport;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public void setCheckInId(int id) {
@@ -74,13 +116,15 @@ public class CheckIn {
         return damageReport;
     }
 
-    public String getStatus() {
-        return status;
+    public boolean isConfirmedCheckIn() {
+        return confirmedCheckIn;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setConfirmedCheckIn(boolean confirmedCheckIn) {
+        this.confirmedCheckIn = confirmedCheckIn;
     }
+
+
     // toString method can be overridden to print the details of the bean, if necessary
     @Override
     public String toString() {
@@ -91,7 +135,7 @@ public class CheckIn {
                ", campusId='" + campusId + '\'' +
                ", checkInDate=" + checkInDate + '\'' +
                ", damageReport=" + damageReport + '\'' +
-               ", status='" + status + '\'' +
+               ", confirmedCheckIN='" + confirmedCheckIn + '\'' +
                '}';
     }
 }

@@ -7,9 +7,11 @@ public class CheckOut {
     private int userId;
     private int reserveID;
     private int equipmentId;
+    private String image;
     private String campusId;
-    private Date dateCheckedOut;
-    private String status;
+    private Date checkOutDate;
+    private boolean confirmedCheckOut;
+    private boolean deleted;
     // Additional fields can be added as required
     
     // Default constructor
@@ -17,14 +19,64 @@ public class CheckOut {
     }
 
     // Constructor with all fields
-    public CheckOut(int checkOutid, int userId, int equipmentId, int reserveID, String campusId, Date dateCheckedOut, Date dateDueBack, String status) {
+    public CheckOut(int checkOutid, int userId, int equipmentId, int reserveID, String campusId,String image, Date checkOutDate, boolean confirmedCheckOut,boolean deleted) {
         this.checkOutid = checkOutid;
         this.userId = userId;
         this.reserveID = reserveID;
         this.equipmentId = equipmentId;
+        this.image = image;
         this.campusId = campusId;
-        this.dateCheckedOut = dateCheckedOut;
-        this.status = status;
+        this.checkOutDate = checkOutDate;
+        this.confirmedCheckOut = confirmedCheckOut;
+        this.deleted = deleted;
+    }
+
+    public boolean isConfirmedCheckOut() {
+        return confirmedCheckOut;
+    }
+
+    public void setConfirmedCheckOut(boolean confirmedCheckOut) {
+        this.confirmedCheckOut = confirmedCheckOut;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Date getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    public void setCheckOutDate(Date checkOutDate) {
+        this.checkOutDate = checkOutDate;
+    }
+
+    public int getReserveID() {
+        return reserveID;
+    }
+
+    public void setReserveID(int reserveID) {
+        this.reserveID = reserveID;
+    }
+
+    public Date getCheckInDate() {
+        return checkOutDate;
+    }
+
+    public void setcheckOutDate(Date checkOutDate) {
+        this.checkOutDate = checkOutDate;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     // Getters and setters
@@ -68,23 +120,17 @@ public class CheckOut {
         this.campusId = campusId;
     }
 
-    public Date getDateCheckedOut() {
-        return dateCheckedOut;
+    public Date checkOutDate() {
+        return checkOutDate;
     }
 
-    public void setDateCheckedOut(Date dateCheckedOut) {
-        this.dateCheckedOut = dateCheckedOut;
+    public void setDateCheckedOut(Date checkOutDate) {
+        this.checkOutDate = checkOutDate;
     }
 
 
 
-    public String getStatus() {
-        return status;
-    }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
     // toString method can be overridden to print the details of the bean, if necessary
     @Override
     public String toString() {
@@ -93,8 +139,8 @@ public class CheckOut {
                ", userId=" + userId +
                ", equipmentId=" + equipmentId +
                ", campusId='" + campusId + '\'' +
-               ", dateCheckedOut=" + dateCheckedOut +
-               ", status='" + status + '\'' +
+               ", checkOutDate=" + checkOutDate +
+               ", confirmedCheckOut='" + confirmedCheckOut + '\'' +
                '}';
     }
 }
