@@ -50,7 +50,7 @@
                 <% if (!campusEquipment.getCampus().equalsIgnoreCase(campus)) { %>
                 <th><a href="<%= request.getServletContext().getContextPath() %>/Equipment?action=wish&id=<%= campusEquipment.getId() %>">Add to wish list</a></th>
                 <% } else { %>
-                <th>Damage report</th>
+                <th>Check-out</th>
                 <% } %>
             </tr>
         <% }

@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="ict.bean.User, ict.db.UserDB, java.util.List"%>
+<%@page import="ict.bean.User, ict.db.UserDB, java.util.List, ict.db.Database"%>
 <%@taglib uri="/WEB-INF/tlds/user.tld" prefix="ict"%>
 <!DOCTYPE html>
 <html>
@@ -35,8 +35,11 @@
                 String dbUrl = request.getServletContext().getInitParameter("dbUrl");
                 String dbUser = request.getServletContext().getInitParameter("dbUser");
                 String dbPassword = request.getServletContext().getInitParameter("dbPassword");
+
+                
+        Database database = new Database(dbUrl, dbUser, dbPassword);
         
-                UserDB db = new UserDB(dbUrl, dbUser, dbPassword);
+                UserDB db = new UserDB(database);
                 List<User> users = (List<User>) db.getUsers();
                 
             %>
