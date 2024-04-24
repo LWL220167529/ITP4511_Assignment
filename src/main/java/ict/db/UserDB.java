@@ -202,8 +202,11 @@ public class UserDB {
             conn.close();
         } catch (SQLException ex) {
             while (ex != null) {
-                ex.printStackTrace();
-                ex = ex.getNextException();
+               System.out.println("SQLState: " + ex.getSQLState());
+               System.out.println("Error Code: " + ex.getErrorCode());
+               System.out.println("Message: " + ex.getMessage());
+               ex.printStackTrace();
+               ex = ex.getNextException();
             }
         } catch (IOException ex) {
             ex.printStackTrace();

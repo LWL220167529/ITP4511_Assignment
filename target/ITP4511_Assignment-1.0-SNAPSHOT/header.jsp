@@ -40,8 +40,8 @@
       >
     </div>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
-        >Return-equipment</a
+      <a href="<%= request.getServletContext().getContextPath() %>/checkIn.jsp"
+        >Check-In</a
       >
     </div>
     <% if (role.equalsIgnoreCase("staff")) { %>
