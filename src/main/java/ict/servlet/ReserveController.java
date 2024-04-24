@@ -5,7 +5,6 @@
 package ict.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.List;
 
@@ -29,7 +28,6 @@ import ict.db.CampusEquipmentDB;
 import ict.db.Database;
 import ict.db.ReserveDB;
 import ict.db.UserDB;
-import oracle.net.aso.e;
 
 /**
  *
@@ -53,7 +51,6 @@ public class ReserveController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        boolean isRedirect = false;
         String message = "";
 
         HttpSession session = request.getSession();
