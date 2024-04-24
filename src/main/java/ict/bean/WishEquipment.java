@@ -1,7 +1,6 @@
 package ict.bean;
 
 import java.sql.Date;
-import ict.bean.CampusEquipment;
 
 public class WishEquipment {
     private int id;

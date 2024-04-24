@@ -6,17 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ict.bean.CampusEquipment;
-import ict.bean.User;
 import ict.bean.UserReserve;
 import ict.bean.WishEquipment;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class ReserveDB {
     private Database db;
@@ -382,7 +379,6 @@ public class ReserveDB {
         PreparedStatement pstmt = null;
         String[] sqls = new String[4];
         ResultSet[] rs = new ResultSet[4];
-        ResultSet rsDelivery = null;
         String sqlWhere = "WHERE r.status = ? AND r.user_id = ?";
 
         sqls[0] = selectCampusEquipmenSql + fromSql + joinCampusEquipmentSql + joinEquipmentSql;
@@ -437,8 +433,6 @@ public class ReserveDB {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet[] rs = new ResultSet[4];
-        ResultSet rsUser = null;
-        ResultSet rsCampus = null;
         String whereSql = "WHERE r.status = ? AND r.delivery_user_id = ?";
         try {
             conn = getConnection();
