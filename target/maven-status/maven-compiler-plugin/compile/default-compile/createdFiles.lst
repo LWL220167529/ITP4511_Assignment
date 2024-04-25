@@ -1,8 +1,18 @@
 ict\db\CampusEquipmentDB.class
+<<<<<<< HEAD
 ict\run\CreateCampus.class
 ict\run\CreateUserTable.class
 ict\run\updateEquipmentImage.class
 ict\run\CreateEquipmentTable.class
+=======
+ict\run\CreateDeviceTable.class
+ict\db\CheckOutDB.class
+ict\run\AddDevice.class
+ict\run\CreateUserTable.class
+ict\bean\CheckOut.class
+ict\run\CreateCampusDeviceTable.class
+ict\run\AddCampusDevice.class
+>>>>>>> IT4511/hang
 ict\bean\Users.class
 ict\run\AddEquipment.class
 ict\tag\UserTag.class
@@ -12,21 +22,52 @@ ict\bean\CampusEquipment.class
 ict\bean\Deilvery.class
 ict\bean\UserReserves.class
 ict\run\CreateCampusEquipmentTable.class
+<<<<<<< HEAD
 ict\bean\Campus.class
 ict\bean\CampusEquipments.class
+=======
+ict\bean\CampusEquipments.class
+ict\bean\Device.class
+ict\run\CreateCheckOut.class
+ict\servlet\DeviceController.class
+ict\db\EquipmentDB.class
+ict\run\AddCampusEquipment.class
+ict\servlet\EquipmentController.class
+ict\servlet\ReserveController.class
+ict\bean\WishList.class
+ict\db\CampusDeviceDB.class
+ict\run\CreateCampus.class
+ict\run\updateDeviceImage.class
+ict\run\updateEquipmentImage.class
+ict\run\CreateEquipmentTable.class
+ict\bean\Campus.class
+ict\db\DeviceDB.class
+ict\run\CreateCheckIn.class
+>>>>>>> IT4511/hang
 ict\bean\Equipment.class
 ict\bean\WishEquipment.class
 ict\db\CampusDB.class
 ict\bean\User.class
+<<<<<<< HEAD
 ict\db\Database.class
 ict\db\EquipmentDB.class
+=======
+ict\bean\CampusDevices.class
+ict\bean\CheckIn.class
+>>>>>>> IT4511/hang
 ict\db\DeliveryDB.class
 ict\run\CreateReserve.class
 ict\bean\UserReserve.class
 ict\run\AddCampus.class
+<<<<<<< HEAD
 ict\run\AddCampusEquipment.class
 ict\servlet\EquipmentController.class
 ict\db\ReserveDB.class
 ict\servlet\ReserveController.class
 ict\servlet\UserController.class
 ict\bean\WishList.class
+=======
+ict\db\CheckInDB.class
+ict\db\ReserveDB.class
+ict\servlet\UserController.class
+>>>>>>> IT4511/hang
