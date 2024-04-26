@@ -9,6 +9,57 @@
         function ChangeCampus() {
           window.location.href = "Reserve?action=delivery&campus=" + document.getElementById("campus").value + "&status=" + document.getElementById("status").value;
         }
+
+        function submitStatus(){
+          var confirmBox = confirm("Are you sure you want to submit the status?");
+          if (confirmBox) {
+            // Continue with the submission logic
+          } else {
+            return;
+          }
+          var checkboxes = document.getElementsByName("status");
+          var selected = [];
+          for (var i = 0; i < checkboxes.length; i++) {
+            if (checkboxes[i].checked) {
+              selected.push(checkboxes[i].value);
+            }
+          }
+          if (selected.length > 0) {
+          var form = document.createElement('form');
+          form.method = 'POST';
+          form.action = 'Reserve';
+          form.style.display = 'none';
+
+          var actionInput = document.createElement('input');
+          actionInput.type = 'hidden';
+          actionInput.name = 'action';
+          actionInput.value = 'deliveryStatus';
+          form.appendChild(actionInput);
+
+          var campusInput = document.createElement('input');
+          campusInput.type = 'hidden';
+          campusInput.name = 'campus';
+
+          campusInput.value = document.getElementById("campus").value;
+          form.appendChild(campusInput);
+          var statusInput = document.createElement('input');
+          statusInput.type = 'hidden';
+          statusInput.name = 'status';
+
+          statusInput.value = document.getElementById("status").value;
+          form.appendChild(statusInput);
+
+          for (var j = 0; j < selected.length; j++) {
+            var selectedInput = document.createElement('input');
+            selectedInput.type = 'hidden';
+            selectedInput.name = 'selected';
+            selectedInput.value = selected[j];
+            form.appendChild(selectedInput);
+          }
+          document.body.appendChild(form);
+          form.submit();
+          }
+        }
     </script>
 </head>
 <body>
@@ -42,7 +93,7 @@
           Status:
           <select name="status" id="status" onchange="ChangeCampus()">
             <option value="approved" <%= "Approved".equalsIgnoreCase(status) ? "selected" : "" %>>Approved</option>
-            <option value="delivery" <%= "Delivery".equalsIgnoreCase(status) ? "selected" : "" %>>Delivery</option>
+            <option value="delivery" <%= "Delivery".equalsIgnoreCase(status) ? "selected" : "" %>>Delivering</option>
             <option value="completed" <%= "completed".equalsIgnoreCase(status) ? "selected" : "" %>>Completed</option>
           </select>
         </div>
@@ -58,7 +109,9 @@
           <th>Delivery Username</th>
           <th>Status</th>
           <th>Estimated Time</th>
-          <th colspan="<%= (role.equalsIgnoreCase("Technician") || role.equalsIgnoreCase("admin"))? "2" : "1" %>">Action</th>
+          <% if (!"completed".equalsIgnoreCase(status)) { %>
+          <th>Action</th>
+          <% } %>
         </tr>
         <% 
           if (reserves.listIsEmpty()) {
@@ -85,13 +138,16 @@
             <% } %>
             <td><%= wishEquipment.getStatus() %></td>
             <td><%= wishEquipment.getDate() %></td>
+            <% if (!"completed".equalsIgnoreCase(status)) { %>
             <td>
-              <% if ("approved".equalsIgnoreCase(status)) { %> 
-                  <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=Delivery&id=<%= wishEquipment.getId() %>">Delivery</a>
-                </td >
-              <% } %>
+              <input type="checkbox" name="status" value="<%= wishEquipment.getId() %>" required/>
+            </td >
+            <% } %>
           </tr>
         <% } } %>
       </table>
+      <% if (!"completed".equalsIgnoreCase(status)) { %>
+      <button onclick="submitStatus()">Submit</button>
+      <% } %>
 </body>
 </html>

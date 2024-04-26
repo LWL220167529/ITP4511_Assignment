@@ -59,7 +59,7 @@
                 No courier available
             <% } %>
             <hr>
-            <% if (campusEquipment.getQuantity() > reserve.getQuantity()) { %>
+            <% if (campusEquipment.getQuantity() >= reserve.getQuantity()) { %>
             <center><button type="submit" class="registerbtn">Update</button></center>
             <% } else { %>
                 <a>The equipment not enough</a>

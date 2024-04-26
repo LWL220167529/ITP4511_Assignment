@@ -7,6 +7,24 @@
     <title>Document</title>
     <script src="js/home.js"></script>
     <link rel="stylesheet" type="text/css" href="css/table.css" />
+    <link rel="stylesheet" type="text/css" href="css/equipment.css" />
+    <script>
+        function searchEquipment() {
+            var input, filter, cards, cardContainer, title, i;
+            input = document.getElementById("search");
+            filter = input.value.toUpperCase();
+            cardContainer = document.getElementsByClassName("equipment")[0];
+            cards = cardContainer.getElementsByClassName("card");
+            for (i = 0; i < cards.length; i++) {
+                title = cards[i].querySelector(".card-title");
+                if (title.innerText.toUpperCase().indexOf(filter) > -1) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 </head>
 <body>
         
@@ -28,35 +46,44 @@
                 <option value="TY" <%= equipments.getCampus().equalsIgnoreCase("TY") ? "selected" : "" %>>Tsing Yi</option>
             </select>
         </div>
+        <div>
+            Search:
+            <input type="text" id="search" placeholder="Search for equipment" onkeyup="searchEquipment()">
+        </div>
     </div>
-    <table class="showEquipment" width="75%" height="75%" border="1">
-        <tr>
-            <th>Equipment image</th>
-            <th>Equipment name</th>
-            <th>Campus</th>
-            <th>Quantity</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-        <% 
-            for (CampusEquipment campusEquipment : campusEquipments) { 
-        %>
-            <tr>
-                <td width="10%" height="10%"><img width="100%" height="100%" src="<%= (campusEquipment.getEquipmentImage() != null) ? "img/" + campusEquipment.getEquipmentImage() : "http://travelmen.org/static/images/404.png" %>" /></td>
-                <td><%= campusEquipment.getEquipmentName() %></td>
-                <td><%= campusEquipment.getCampus() %></td>
-                <td><%= campusEquipment.getQuantity() %></td>
-                <td><%= campusEquipment.getStatus() %></td>
-                <% if (!campusEquipment.getCampus().equalsIgnoreCase(campus)) { %>
-                <th><a href="<%= request.getServletContext().getContextPath() %>/Equipment?action=wish&id=<%= campusEquipment.getId() %>">Add to wish list</a></th>
-                <% } else { %>
-                <th>Check-out</th>
-                <% } %>
-            </tr>
-        <% }
-    } else {
-        response.sendRedirect(request.getServletContext().getContextPath());
-    } %>
-    </table>
+    <div class="container equipment">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <% 
+                for (CampusEquipment campusEquipment : campusEquipments) { 
+            %>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <picture>
+                                <img class="img-fluid rounded" src="<%= (campusEquipment.getEquipmentImage() != null) ? "img/" + campusEquipment.getEquipmentImage() : "http://travelmen.org/static/images/404.png" %>" 
+                                style="width: 600px; height: 337px; object-fit: cover;" alt="<%= campusEquipment.getEquipmentName() %>" />
+                            </picture>
+                            <h5 class="card-title center text-center"><%= campusEquipment.getEquipmentName() %></h5>
+                            <p>campus: <%= campusEquipment.getCampus() %></p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>Status: <%= campusEquipment.getStatus() %></div>
+                                <div>Quantity: <%= campusEquipment.getQuantity() %></div>
+                            </div>
+                            <div class="text-end mt-3">
+                                <% if (!campusEquipment.getCampus().equalsIgnoreCase(campus)) { %>
+                                <a href="<%= request.getServletContext().getContextPath() %>/Equipment?action=wish&id=<%= campusEquipment.getId() %>"><button class="btn btn-primary">Add to wish list</button></a>
+                                <% } else { %>
+                                <button class="btn btn-primary">Check-out</button>  
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }
+        } else {
+            response.sendRedirect(request.getServletContext().getContextPath());
+        } %>
+        </div>
+    </div>
 </body>
 </html>

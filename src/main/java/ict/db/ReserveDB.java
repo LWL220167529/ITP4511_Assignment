@@ -218,7 +218,7 @@ public class ReserveDB {
                     selectDUserSql + fromSql + joinDUserSql
             };
             for (int i = 0; i < rs.length; i++) {
-                pstmt = conn.prepareStatement(sqls[i]);
+                pstmt = conn.prepareStatement(sqls[i]+" ORDER BY r.id DESC");
                 rs[i] = pstmt.executeQuery();
             }
             rs[3].next();
@@ -654,6 +654,13 @@ public class ReserveDB {
             CampusEquipment campusEquipment = equipmentDB.getCampusEquipmentById(userReserve.getEquipmentId());
             if (campusEquipment.getQuantity() < userReserve.getQuantity()) {
                 return false;
+            } else {
+                if (equipmentDB.updateCampusEquipmentQuantity(userReserve.getEquipmentId(), campusEquipment.getQuantity() - userReserve.getQuantity())) {
+                    result = true;
+                } else {
+                    System.out.println("Failed to update campus equipment quantity.");
+                    return false;
+                }
             }
             conn = getConnection();
             String sql = "UPDATE Reserve SET status = ?, delivery_user_id = ? WHERE id = ?";
@@ -661,6 +668,41 @@ public class ReserveDB {
             pstmt.setString(1, newStatus);
             pstmt.setInt(2, courierId);
             pstmt.setInt(3, reserveId);
+            if (pstmt.executeUpdate() > 0) {
+                result = true;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public boolean updateDReserveStatus(int reserveId, String newStatus) {
+        boolean result = false;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        CampusEquipmentDB equipmentDB = new CampusEquipmentDB(db);
+
+        try {
+            conn = getConnection();
+            String sql = "UPDATE Reserve SET status = ? WHERE id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, newStatus);
+            pstmt.setInt(2, reserveId);
             if (pstmt.executeUpdate() > 0) {
                 result = true;
             }
