@@ -16,7 +16,7 @@
     
     <body>
         <%@ include file="header.jsp" %>
-        <% if (!role.equalsIgnoreCase("admin")) {
+        <% if (!role.equalsIgnoreCase("admin") && headerUser.getId() != user.getId()) { %>
            
         response.sendRedirect("Equipment?action=getCampus&campus=" + campus);
         } %>

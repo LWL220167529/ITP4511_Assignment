@@ -31,7 +31,7 @@
       <% } %>
     </div>
 
-    <table border="1" style="width: 75%;">
+    <table border="1" style="width: 85%;">
       <tr>
         <th>Equipment Image</th>
         <th>Username</th>
@@ -45,10 +45,12 @@
         <th colspan="<%= (role.equalsIgnoreCase("Technician") || role.equalsIgnoreCase("admin"))? "2" : "1" %>">Action</th>
       </tr>
       <% 
-        if (reserves.listIsEmpty() && !"pending".equalsIgnoreCase(request.getParameter("action"))) {
-            response.sendRedirect(
-                    request.getServletContext().getContextPath() + "/Equipment?action=getCampus&campus=" + campus);
-          return;
+        if (reserves.listIsEmpty()) {
+      %>
+        <tr>
+          <td colspan="10">No records found</td>
+        </tr>
+      <%
         } else {
           List<WishEquipment> wishEquipmentList = reserves.getList();
           for (WishEquipment wishEquipment : wishEquipmentList) {

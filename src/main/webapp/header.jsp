@@ -57,13 +57,6 @@
       >
     </div>
     <% } %> <% } %> 
-    <% if (role.equalsIgnoreCase("courier")) { %>
-    <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/delivery.jsp"
-        >Delivery</a
-      >
-    </div>
-    <% } %>
     <% if (role.equalsIgnoreCase("admin") ||
     role.equalsIgnoreCase("technician")) { %>
     <div class="page">
