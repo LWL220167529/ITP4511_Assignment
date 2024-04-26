@@ -1,0 +1,9 @@
+.equipment{
+    margin-top: 20px;
+}
+
+.equipment-item {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    justify-content: space-evenly;
+}

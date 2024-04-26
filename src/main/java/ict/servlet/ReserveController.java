@@ -147,16 +147,79 @@ public class ReserveController extends HttpServlet {
 
         } else if ("updateAllStatus".equalsIgnoreCase(action)) {
 
-            updateReserves(request, response);
+            updateReserves(request, response, "Approved");
 
         } else if ("delivery".equalsIgnoreCase(action)) {
 
             getCourier(request, response);
 
+        } else if ("deliveryStatus".equalsIgnoreCase(action)) {
+
+            updateDeliveryStatusReserve(request, response);
         } else {
             response.sendRedirect(
-                    request.getServletContext().getContextPath() + "/Equipment?action=getCampus&campus="
-                            + user.getCampus());
+                    request.getServletContext().getContextPath());
+        }
+    }
+
+    private void updateDeliveryStatusReserve(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            HttpSession session = request.getSession(); // Change the cast to HttpSession
+            boolean valid = true;
+            User user;
+            if (session.getAttribute("user") == null) {
+                response.sendRedirect("Login");
+                return;
+            } else {
+                user = (User) session.getAttribute("user");
+            }
+
+            String status = "";
+            String message = "";
+            String[] selecteds = request.getParameterValues("selected");
+            int[] selectedIds = new int[selecteds.length];
+
+            for (int i = 0; i < selecteds.length; i++) {
+                selectedIds[i] = Integer.parseInt(selecteds[i]);
+            }
+
+            if (request.getParameter("status") != null) {
+                status = request.getParameter("status");
+            } else {
+                message += "Status is not valid";
+                valid = false;
+            }
+            System.out
+                    .println("Status: " + status + " Campus: " + user.getCampus() + " Selected: " + selectedIds.length);
+            if (selectedIds != null && selectedIds.length > 0) {
+
+                    if ("Approved".equalsIgnoreCase(status)) {
+                        status = "Delivery";
+                    } else if ("delivery".equalsIgnoreCase(status)) {
+                        status = "Delivered";
+                    } else {
+                        valid = false;
+                        message += "\nStatus is not valid";
+                    }
+                if (valid) {
+                    for (int selected : selectedIds) {
+                        if (db.updateDReserveStatus(selected, status)) {
+                        } else {
+                            CampusEquipment equipment = cedb.getCampusEquipmentById(selected);
+                            message += "\n" + equipment.getEquipmentName() + " failed to update";
+                        }
+                        message += "\nReserve status updated successfully";
+                    }
+                    sendRedirectAndMessage(request, response, message, "");
+                }
+
+            } else {
+                message += "No selected items";
+                sendRedirectAndMessage(request, response, message, "");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -177,6 +240,10 @@ public class ReserveController extends HttpServlet {
 
             String status = request.getParameter("status") == null ? "Approved" : request.getParameter("status");
 
+            if("completed".equalsIgnoreCase(status)){
+                status = "Delivered";
+            }
+
             String campus = request.getParameter("campus") == null ? user.getCampus()
                     : request.getParameter("campus");
 
@@ -185,7 +252,6 @@ public class ReserveController extends HttpServlet {
             request.setAttribute("dates", dates);
             request.setAttribute("campus", campus);
             request.setAttribute("reserves", wishList);
-
 
             request.getRequestDispatcher("delivery.jsp").forward(request, response);
         } catch (Exception e) {
@@ -230,13 +296,12 @@ public class ReserveController extends HttpServlet {
         }
     }
 
-    public void updateReserves(HttpServletRequest request, HttpServletResponse response) {
+    public void updateReserves(HttpServletRequest request, HttpServletResponse response, String status) {
         try {
             HttpSession session = request.getSession(); // Change the cast to HttpSession
             WishList wishList = (WishList) session.getAttribute("setDelivery");
             int courierId = Integer.parseInt(request.getParameter("Courier"));
             String message = "";
-            String status = "Delivery";
 
             for (WishEquipment reserve : wishList.getList()) {
                 if (db.updateReserveStatus(reserve.getId(), courierId, status)) {

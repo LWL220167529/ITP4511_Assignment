@@ -175,4 +175,24 @@ public class CampusEquipmentDB {
         }
         return updated;
     }
+
+    public boolean updateCampusEquipmentQuantity(int id, int quantity) {
+        boolean updated = false;
+        String sql = "UPDATE campus_equipment SET quantity = ? WHERE id = ?";
+        try (Connection con = db.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, quantity);
+            ps.setInt(2, id);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                updated = true;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return updated;
+    }
 }

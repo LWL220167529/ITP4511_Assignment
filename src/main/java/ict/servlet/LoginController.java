@@ -131,13 +131,22 @@ public class LoginController extends HttpServlet {
             throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-
+        username = username.trim();
+        password = password.trim();
+        User bean = new User();
+        boolean remenber = false;
+        if (request.getParameter("remenber") != null) {
+            remenber = true;
+        }
         String targetURL;
-        String[] isValid = udb.isValidUser(username, password);
         HttpSession session = request.getSession(true);
 
-        if (Boolean.valueOf(isValid[0])) {
-            User bean = udb.getUserById(Integer.parseInt(isValid[1]));
+        if (udb.isValidUser(username, password, bean)) {
+            if (remenber) {
+                session.setMaxInactiveInterval(60 * 60 * 24 * 7);
+            } else {
+                session.setMaxInactiveInterval(60 * 60);
+            }
             session.setAttribute("user", bean);
             if (bean.getRole().equals("courier")) {
                 targetURL = getServletContext().getContextPath() + "/Reserve?action=delivery";

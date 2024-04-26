@@ -129,9 +129,8 @@ public class UserDB {
         }
     }
 
-    public String [] isValidUser(String user, String pwd) {
-        String [] isValid = new String[2];
-        isValid[0] = "false";
+    public boolean isValidUser(String user, String pwd, User beanUser) {
+        boolean isValid = false;
         Connection conn = null;
         PreparedStatement stmt = null;
         String preQueryStatement = "SELECT * FROM user WHERE "
@@ -150,8 +149,13 @@ public class UserDB {
             // 4. execute the query and assign to the result
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                isValid[0] = "true";
-                isValid[1] = String.valueOf(rs.getInt("id")); // Convert integer to string
+                isValid = true;
+                beanUser.setId(rs.getInt("id"));
+                beanUser.setUsername(rs.getString("username"));
+                beanUser.setPhone(rs.getString("phone"));
+                beanUser.setEmail(rs.getString("email"));
+                beanUser.setCampus(rs.getString("campus"));
+                beanUser.setRole(rs.getString("role"));
             }
 
             return isValid;
