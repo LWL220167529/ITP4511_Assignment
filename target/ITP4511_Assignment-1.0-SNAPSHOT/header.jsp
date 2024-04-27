@@ -36,7 +36,7 @@
       >
     </div>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
+      <a href="<%= request.getServletContext().getContextPath() %>/checkOut.jsp"
         >Check-out</a
       >
     </div>

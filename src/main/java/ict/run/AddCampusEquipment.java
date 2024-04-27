@@ -16,7 +16,7 @@ public class AddCampusEquipment {
         Random random = new Random();
         String dbUrl = "jdbc:mysql://localhost:3306/ITP4511_Assignment_DB?useSSL=false";
         String dbUser = "root";
-        String dbPassword = "root";
+        String dbPassword = "";
 
         Database db = new Database(dbUrl, dbUser, dbPassword);
 

@@ -5,42 +5,51 @@ import java.sql.Date;
 public class CheckIn {
     private int checkInId;
     private int userId;
-    private int reserveID;
-    private int equipmentId;
+    private String userName;
+    private String equipmentName;
+    private int quantity;
     private String image;
-    private String campusId;
+    private String campusName;
     private Date checkInDate;
     private String damageReport;
     private boolean confirmedCheckIn;
     private boolean confirmedDamage;
     private boolean deleted;
-    // Additional fields can be added as required
+    
 
-    public int getReserveID() {
-        return reserveID;
-    }
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+
     
     // Default constructor
     public CheckIn() {
     }
 
     // Constructor with all fields
-    public CheckIn(int checkInId, int userId, int reserveID,int equipmentId, String campusId, String image, Date checkInDate, boolean confirmedCheckIn, String damageReport, boolean deleted,boolean confirmedDamage) {
+    public CheckIn(int checkInId, int userId,String userName, String equipmentName, int quantity,String campusName, String image, Date checkInDate, boolean confirmedCheckIn, String damageReport, boolean deleted,boolean confirmedDamage) {
         this.checkInId = checkInId;
         this.userId = userId;
-        this.reserveID = reserveID;
-        this.equipmentId = equipmentId;
+        this.userName= userName;
+        this.equipmentName = equipmentName;
+        this.quantity = quantity;
         this.image = image;
-        this.campusId = campusId;
+        this.campusName = campusName;
         this.checkInDate = checkInDate;
         this.damageReport = damageReport ;
         this.confirmedCheckIn = confirmedCheckIn;
         this.deleted = deleted;
         this.confirmedDamage = confirmedDamage;
+    }
+    
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public boolean isConfirmedDamage() {
@@ -49,6 +58,14 @@ public class CheckIn {
 
     public String getImage() {
         return image;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public void setImage(String image) {
@@ -64,9 +81,7 @@ public class CheckIn {
         return checkInId;
     }
 
-    public void setReserveID(int reserveID) {
-        this.reserveID = reserveID;
-    }
+
 
     public void setDamageReport(String damageReport) {
         this.damageReport = damageReport;
@@ -88,20 +103,20 @@ public class CheckIn {
         this.userId = userId;
     }
 
-    public int getEquipmentId() {
-        return equipmentId;
+    public String getEquipmentName() {
+        return equipmentName;
     }
 
-    public void setEquipmentId(int equipmentId) {
-        this.equipmentId = equipmentId;
+    public void setEquipmentName(String equipmentName) {
+        this.equipmentName = equipmentName;
     }
 
-    public String getCampusId() {
-        return campusId;
+    public String getCampusName() {
+        return campusName;
     }
 
-    public void setCampusId(String campusId) {
-        this.campusId = campusId;
+    public void setCampusName(String campusName) {
+        this.campusName = campusName;
     }
 
     public Date getCheckInDate() {
@@ -131,8 +146,8 @@ public class CheckIn {
         return "CheckInEquipment{" +
                "checkInId=" + checkInId +
                ", userId=" + userId +
-               ", equipmentId=" + equipmentId +
-               ", campusId='" + campusId + '\'' +
+               ", equipmentName=" + equipmentName +
+               ", campusName='" + campusName + '\'' +
                ", checkInDate=" + checkInDate + '\'' +
                ", damageReport=" + damageReport + '\'' +
                ", confirmedCheckIN='" + confirmedCheckIn + '\'' +

@@ -3,32 +3,60 @@ package ict.bean;
 import java.sql.Date;
 
 public class CheckOut {
-    private int checkOutid;
+    private int checkOutId;
     private int userId;
-    private int reserveID;
-    private int equipmentId;
+    private String userName;
+    private String equipmentName;
+    private int quantity;
     private String image;
-    private String campusId;
+    private String campusName;
     private Date checkOutDate;
+    private boolean returned;
     private boolean confirmedCheckOut;
     private boolean deleted;
-    // Additional fields can be added as required
+
+
+    public String getEquipmentName() {
+        return equipmentName;
+    }
+
+    public void setEquipmentName(String equipmentName) {
+        this.equipmentName = equipmentName;
+    }
+
+    public boolean isReturned() {
+        return returned;
+    }
+
+    public void setReturned(boolean returned) {
+        this.returned = returned;
+    }
     
     // Default constructor
     public CheckOut() {
     }
 
     // Constructor with all fields
-    public CheckOut(int checkOutid, int userId, int equipmentId, int reserveID, String campusId,String image, Date checkOutDate, boolean confirmedCheckOut,boolean deleted) {
-        this.checkOutid = checkOutid;
+    public CheckOut(int checkOutId, int userId, String userName, String equipmentName,int quantity, String campusName ,String image, Date checkOutDate, boolean returned, boolean confirmedCheckOut,boolean deleted) {
+        this.checkOutId = checkOutId;
         this.userId = userId;
-        this.reserveID = reserveID;
-        this.equipmentId = equipmentId;
+        this.userName= userName;
+        this.equipmentName = equipmentName;
+        this.quantity = quantity;
         this.image = image;
-        this.campusId = campusId;
+        this.campusName = campusName;
         this.checkOutDate = checkOutDate;
+        this.returned = returned;
         this.confirmedCheckOut = confirmedCheckOut;
         this.deleted = deleted;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public boolean isConfirmedCheckOut() {
@@ -55,13 +83,7 @@ public class CheckOut {
         this.checkOutDate = checkOutDate;
     }
 
-    public int getReserveID() {
-        return reserveID;
-    }
 
-    public void setReserveID(int reserveID) {
-        this.reserveID = reserveID;
-    }
 
     public Date getCheckInDate() {
         return checkOutDate;
@@ -80,12 +102,12 @@ public class CheckOut {
     }
 
     // Getters and setters
-    public int getcheckOutid() {
-        return checkOutid;
+    public int getCheckOutId() {
+        return checkOutId;
     }
 
-    public void setCheckOutid(int id) {
-        this.checkOutid = id;
+    public void setCheckOutId(int id) {
+        this.checkOutId = id;
     }
 
     public int getUserId() {
@@ -96,28 +118,23 @@ public class CheckOut {
         this.userId = userId;
     }
 
-    public int getReserveId() {
-        return reserveID;
-    }
 
-    public void setReserveId(int reserveID) {
-        this.reserveID = reserveID;
-    }
     
-    public int getEquipmentId() {
-        return equipmentId;
+
+    public String getCampusName() {
+        return campusName;
     }
 
-    public void setEquipmentId(int equipmentId) {
-        this.equipmentId = equipmentId;
+    public String getUserName() {
+        return userName;
     }
 
-    public String getCampusId() {
-        return campusId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public void setCampusId(String campusId) {
-        this.campusId = campusId;
+    public void setCampusName(String campusName) {
+        this.campusName = campusName;
     }
 
     public Date checkOutDate() {
@@ -135,10 +152,10 @@ public class CheckOut {
     @Override
     public String toString() {
         return "CheckOutEquipment{" +
-               "id=" + checkOutid +
+               "id=" + checkOutId +
                ", userId=" + userId +
-               ", equipmentId=" + equipmentId +
-               ", campusId='" + campusId + '\'' +
+               ", equipmentName=" + equipmentName +
+               ", campusName='" + campusName + '\'' +
                ", checkOutDate=" + checkOutDate +
                ", confirmedCheckOut='" + confirmedCheckOut + '\'' +
                '}';

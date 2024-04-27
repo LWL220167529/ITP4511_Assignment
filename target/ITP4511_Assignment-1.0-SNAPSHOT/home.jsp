@@ -73,7 +73,12 @@
                                 <% if (!campusEquipment.getCampus().equalsIgnoreCase(campus)) { %>
                                 <a href="<%= request.getServletContext().getContextPath() %>/Equipment?action=wish&id=<%= campusEquipment.getId() %>"><button class="btn btn-primary">Add to wish list</button></a>
                                 <% } else { %>
-                                <button class="btn btn-primary">Check-out</button>  
+                                    <form action="<%= request.getServletContext().getContextPath() %>/Reserve" method="post">
+                                        <input type="hidden" name="action" value="checkout">
+                                        <input type="hidden" name="equipmentId" value="<%= campusEquipment.getId() %>">
+                                        <input type="hidden" name="userId" value="<%= headerUser.getId() %>">
+                                        <button type="submit" class="btn btn-primary">Check-out</button>
+                                    </form>  
                                 <% } %>
                             </div>
                         </div>

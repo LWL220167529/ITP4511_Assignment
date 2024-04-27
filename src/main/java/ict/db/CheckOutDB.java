@@ -27,13 +27,15 @@ public class CheckOutDB {
 
     public boolean createCheckOutTable() {
         String sql = "CREATE TABLE IF NOT EXISTS checkout (" +
-                "checkOutid INT PRIMARY KEY AUTO_INCREMENT, " +
+                "checkOutId INT PRIMARY KEY AUTO_INCREMENT, " +
                 "userId INT, " +
-                "reserveID INT, " +
-                "equipmentId INT, " +
-                "campusId VARCHAR(255), " +
+                "userName VARCHAR(255), " +
+                "equipmentName VARCHAR(255), " +
+                "quantity INT, " +
+                "campusName VARCHAR(255), " +
                 "image VARCHAR(255), " +
                 "checkOutDate DATE, " +
+                "returned BOOLEAN DEFAULT FALSE, " +
                 "confirmedCheckOut BOOLEAN DEFAULT FALSE, " +
                 "deleted BOOLEAN DEFAULT FALSE)";
 
@@ -47,24 +49,33 @@ public class CheckOutDB {
         }
     }
 
-    public boolean insertCheckOut(CheckOut checkOut) {
-        String sql = "INSERT INTO checkout (userId, reserveID, equipmentId, campusId, image, checkOutDate, confirmedCheckOut, deleted) VALUES (?, ?, ?, ?, ?, ?)";
-        
+
+    public boolean insertCheckOutForUser(int userId,  String userName, String equipmentName, int quantity, String campusName, String image, java.util.Date checkOutDate) {
+        String sql = "INSERT INTO checkout (userId, userName, equipmentName, quantity, campusName, image, checkOutDate, returned, confirmedCheckOut, deleted) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?,FALSE,  FALSE, FALSE)";
+
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setInt(1, checkOut.getUserId());
-            ps.setInt(2, checkOut.getReserveID());
-            ps.setInt(3, checkOut.getEquipmentId());
-            ps.setString(4, checkOut.getCampusId());
-            ps.setString(5, checkOut.getImage());
-            ps.setDate(6, new java.sql.Date(checkOut.getCheckOutDate().getTime()));
- 
-            return ps.executeUpdate() > 0;
+            ps.setInt(1, userId);
+            ps.setString(2, userName);
+              ps.setString(3, equipmentName);
+            ps.setInt(4, quantity);
+            ps.setString(5, campusName);
+            ps.setString(6, image);
+
+            // Convert java.util.Date to java.sql.Date
+            java.sql.Date checkOutDateSql = new java.sql.Date(checkOutDate.getTime());
+            ps.setDate(7, checkOutDateSql);
+
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
         } catch (SQLException ex) {
             ex.printStackTrace();
             return false;
         }
     }
+    
+
 
     public boolean confirmCheckOut(int checkOutId) {
         String sql = "UPDATE checkout SET confirmedCheckout = TRUE WHERE checkOutid = ?";
@@ -81,27 +92,26 @@ public class CheckOutDB {
         }
     }
 
-    public List<CheckOut> getAllConfirmedAndNotDeletedCheckOuts() {
+ public List<CheckOut> getAllConfirmedCheckOuts(int userId) {
     List<CheckOut> checkOuts = new ArrayList<>();
-    String sql = "SELECT * FROM checkout WHERE confirmedCheckout = TRUE AND deleted = FALSE";
+    String sql = "SELECT * FROM checkout WHERE confirmedCheckout = TRUE AND returned = FALSE AND deleted = FALSE AND userId = ?";
 
     try (Connection con = getConnection();
-         PreparedStatement ps = con.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, userId);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                int checkOutid = rs.getInt("checkOutid");
+                String userName = rs.getString("userName");
+                String equipmentName = rs.getString("equipmentName");
+                int quantity = rs.getInt("quantity");
+                String campusName = rs.getString("campusName");
+                String image = rs.getString("image");
+                java.sql.Date checkOutDate = rs.getDate("checkOutDate");
 
-        while (rs.next()) {
-            int checkOutid = rs.getInt("checkOutid");
-            int userId = rs.getInt("userId");
-            int reserveID = rs.getInt("reserveID");
-            int equipmentId = rs.getInt("equipmentId");
-            String campusId = rs.getString("campusId");
-            String image = rs.getString("image");
-            java.sql.Date checkOutDate = rs.getDate("checkOutDate");
-            boolean deleted = rs.getBoolean("deleted");
-
-            // Assuming a constructor or setters to handle the data appropriately
-            CheckOut checkOut = new CheckOut(checkOutid, userId, equipmentId, reserveID, campusId, image, checkOutDate, true, deleted);
-            checkOuts.add(checkOut);
+                CheckOut checkOut = new CheckOut(checkOutid, userId, userName, equipmentName, quantity, campusName, image, checkOutDate, false, true, false);
+                checkOuts.add(checkOut);
+            }
         }
     } catch (SQLException ex) {
         ex.printStackTrace();
@@ -116,23 +126,23 @@ public class CheckOutDB {
     
     public List<CheckOut> getAllUnconfirmedCheckOuts() {
             List<CheckOut> checkOuts = new ArrayList<>();
-            String sql = "SELECT * FROM checkout WHERE confirmedCheckout = FALSE AND deleted = FALSE";
+            String sql = "SELECT * FROM checkout WHERE confirmedCheckout = FALSE AND returned = FALSE AND deleted = FALSE";
 
             try (Connection con = getConnection();
                  PreparedStatement ps = con.prepareStatement(sql);
                  ResultSet rs = ps.executeQuery()) {
 
                 while (rs.next()) {
-                    int checkOutid = rs.getInt("checkOutid");
+                    int checkOutId = rs.getInt("checkOutId");
                     int userId = rs.getInt("userId");
-                    int reserveID = rs.getInt("reserveID");
-                    int equipmentId = rs.getInt("equipmentId");
-                    String campusId = rs.getString("campusId");
+                    String userName = rs.getString("userName");
+                    String equipmentName = rs.getString("equipmentName");
+                    int quantity = rs.getInt("quantity");
+                    String campusName = rs.getString("campusName");
                     String image = rs.getString("image");
                     java.sql.Date checkOutDate = rs.getDate("checkOutDate");
-                    boolean deleted = rs.getBoolean("deleted");
-
-                    CheckOut checkOut = new CheckOut(checkOutid, userId, equipmentId, reserveID, campusId, image, checkOutDate, false, deleted);
+ 
+                    CheckOut checkOut = new CheckOut(checkOutId, userId, userName, equipmentName, quantity, campusName,  image, checkOutDate, false, false, false);
                     checkOuts.add(checkOut);
                 }
             } catch (SQLException ex) {

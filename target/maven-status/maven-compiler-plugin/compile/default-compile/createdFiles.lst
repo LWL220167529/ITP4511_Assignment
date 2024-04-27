@@ -19,12 +19,14 @@ ict\bean\CampusEquipments.class
 ict\run\CreateCheckIn.class
 ict\run\CreateCheckOut.class
 ict\bean\Equipment.class
+ict\servlet\CheckOutController.class
 ict\bean\WishEquipment.class
 ict\db\CampusDB.class
 ict\bean\User.class
 ict\db\Database.class
 ict\bean\CheckIn.class
 ict\db\EquipmentDB.class
+ict\servlet\CheckInController.class
 ict\db\DeliveryDB.class
 ict\run\CreateReserve.class
 ict\bean\UserReserve.class
