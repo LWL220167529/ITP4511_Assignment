@@ -45,6 +45,11 @@
         >Check-In</a
       >
     </div>
+     <div class="page">
+      <a href="<%= request.getServletContext().getContextPath() %>/borrowedRecord.jsp"
+        >Borrowed Record</a
+      >
+    </div>
     <% if (role.equalsIgnoreCase("staff")) { %>
     <div class="page">
       <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
@@ -67,7 +72,7 @@
     <% if (role.equalsIgnoreCase("admin") ||
     role.equalsIgnoreCase("technician")) { %>
     <div class="page">
-      <a href="<%= request.getServletContext().getContextPath() %>/damage.jsp"
+      <a href="<%= request.getServletContext().getContextPath() %>/reviewDamage.jsp"
         >Damage</a
       >
     </div>

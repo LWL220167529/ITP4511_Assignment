@@ -22,11 +22,9 @@ function setAction(form) {
     List<CheckOut> checkOuts = checkOutDB.getAllUnconfirmedCheckOuts();
 %>
 <div class="container my-4">
-    
+    <h4>Unconfirmed Check-Out Records</h4>
     <% if (checkOuts != null && !checkOuts.isEmpty()) {
-        %><h4>Unconfirmed Check-Out Records</h4>
-        <%
-        System.out.println("Number of checkouts fetched: " + checkOuts.size());
+        
         for (CheckOut checkOut : checkOuts) { %>
     <div class="card mb-3">
         <div class="row g-0 align-items-center">

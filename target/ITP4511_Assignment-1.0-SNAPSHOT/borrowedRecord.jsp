@@ -8,26 +8,21 @@
     <%@ page import="ict.bean.CheckOut" %>
     <%@ page import="java.util.List" %>
 </head>
-<script>
-function setAction(form) {
-    var action = form.querySelector('button[type="submit"]:focus').value;
-    form.action = "CheckOutController?action=" + action;
-}
-</script>
+
 
 <body>
 <%@ include file="header.jsp" %>
 <%
     CheckOutDB checkOutDB = new CheckOutDB("jdbc:mysql://localhost:3306/ITP4511_Assignment_DB?useSSL=false", "root", ""); 
-    List<CheckOut> checkOuts = checkOutDB.getAllUnconfirmedCheckOuts();
+    List<CheckOut> checkOuts = checkOutDB.getAllConfirmedCheckOuts();
+    
 %>
 <div class="container my-4">
     
     <% if (checkOuts != null && !checkOuts.isEmpty()) {
-        %><h4>Unconfirmed Check-Out Records</h4>
+        %><h4>Borrow Records</h4>
         <%
-        System.out.println("Number of checkouts fetched: " + checkOuts.size());
-        for (CheckOut checkOut : checkOuts) { %>
+       for (CheckOut checkOut : checkOuts) { %>
     <div class="card mb-3">
         <div class="row g-0 align-items-center">
             <div class="col-md-8">
@@ -38,11 +33,18 @@ function setAction(form) {
                     <p class="card-text"><b>Item:</b> <%= checkOut.getEquipmentName() %></p>
                     <p class="card-text"><b>Campus:</b> <%= checkOut.getCampusName() %></p>
                     <p class="card-text"><b>Quantity:</b> <%= checkOut.getQuantity() %></p>
-                    <form action="" method="post" onsubmit="setAction(this)">
-                        <input type="hidden" name="checkoutId" value="<%= checkOut.getCheckOutId() %>" />
-                        <button type="submit" name="action" value="confirm" class="btn btn-primary">Confirm</button>
-                        <button type="submit" name="action" value="delete" class="btn btn-warning">Delete</button>
-                 </form>
+                    <form action="CheckInController" method="post" onsubmit="setAction(this)">
+                        <input type="hidden" name="action" value="return" />
+                        <input type="hidden" name="checkOutId" value="<%= checkOut.getCheckOutId() %>" />
+                        <input type="hidden" name="userId" value="<%= checkOut.getUserId() %>" />
+                        <input type="hidden" name="userName" value="<%= checkOut.getUserName() %>" />
+                        <input type="hidden" name="equipmentName" value="<%= checkOut.getEquipmentName() %>" />
+                        <input type="hidden" name="quantity" value="<%= checkOut.getQuantity() %>" />
+                        <input type="hidden" name="campusName" value="<%= checkOut.getCampusName() %>" />
+                        <input type="hidden" name="image" value="<%= checkOut.getImage() %>" />
+                        <button type="submit" class="btn btn-primary">Return Item</button>
+                    </form>
+
 
 
                 </div>
@@ -54,7 +56,7 @@ function setAction(form) {
     </div>
     <%  }
     } else { %>
-        <p>No unconfirmed check-out records found.</p>
+        <p>No borrow records found.</p>
     <% } %>
 </div>
 </body>

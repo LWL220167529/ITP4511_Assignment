@@ -12,7 +12,7 @@
 function setAction(form) {
     var action = form.querySelector('button[type="submit"]:focus').value;
     form.action = "CheckInController?action=" + action;
-}
+}S
 </script>
 
 <body>
@@ -38,7 +38,7 @@ function setAction(form) {
                      <form action="" method="post" onsubmit="setAction(this)">
                         <input type="hidden" name="checkInId" value="<%= checkIn.getCheckInId() %>" />
                        <button type="submit" name="action" value="confirm" class="btn btn-primary">Confirm</button>
-                       <button type="submit" name="action" value="reportDamage" class="btn btn-danger">Add Damage Report</button>
+                       <button type="button" onclick="location.href='damageReport.jsp?checkInId=<%= checkIn.getCheckInId() %>'" class="btn btn-danger">Add Damage Report</button>
                        <button type="submit" name="action" value="delete" class="btn btn-warning">Delete</button>
                      </form>
                 </div>

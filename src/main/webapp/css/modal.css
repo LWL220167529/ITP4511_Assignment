@@ -1,0 +1,31 @@
+/* Custom Modal Styles */
+
+
+.modal-dialog {
+    display: flex; /* This makes the .modal-dialog itself a flex container */
+    align-items: center; /* This vertically centers the .modal-dialog in the .modal */
+    min-height: calc(100% - (1.75rem * 2)); /* This ensures that the dialog is always centered within the viewport height minus some margin */
+    margin: 0 auto; /* Center the dialog horizontally */
+  }
+  
+  
+  .modal-content {
+    border-radius: 10px; /* Rounded corners for the modal */
+  }
+  
+  .modal-body {
+    padding: 2rem; /* Spacing inside the modal body */
+  }
+  
+  .modal-footer {
+    border-top: none; /* Removes the border from the footer if there's one */
+    justify-content: center; /* Centers the buttons */
+  }
+  
+  /* Input field styles */
+  #damageDescription {
+    border: 1px solid #ced4da;
+    box-shadow: none; /* Removes the box-shadow if there's one */
+    width: 95%; /* Occupies almost the whole width of the modal */
+    margin: 0 auto; /* Centers the input field */
+  }

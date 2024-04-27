@@ -34,7 +34,7 @@ public class CheckOutDB {
                 "quantity INT, " +
                 "campusName VARCHAR(255), " +
                 "image VARCHAR(255), " +
-                "checkOutDate DATE, " +
+                "checkOutDate DATE DEFAULT (CURDATE()), " +
                 "returned BOOLEAN DEFAULT FALSE, " +
                 "confirmedCheckOut BOOLEAN DEFAULT FALSE, " +
                 "deleted BOOLEAN DEFAULT FALSE)";
@@ -50,9 +50,9 @@ public class CheckOutDB {
     }
 
 
-    public boolean insertCheckOutForUser(int userId,  String userName, String equipmentName, int quantity, String campusName, String image, java.util.Date checkOutDate) {
-        String sql = "INSERT INTO checkout (userId, userName, equipmentName, quantity, campusName, image, checkOutDate, returned, confirmedCheckOut, deleted) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?,FALSE,  FALSE, FALSE)";
+    public boolean insertCheckOutForUser(int userId,  String userName, String equipmentName, int quantity, String campusName, String image) {
+        String sql = "INSERT INTO checkout (userId, userName, equipmentName, quantity, campusName, image) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -63,9 +63,7 @@ public class CheckOutDB {
             ps.setString(5, campusName);
             ps.setString(6, image);
 
-            // Convert java.util.Date to java.sql.Date
-            java.sql.Date checkOutDateSql = new java.sql.Date(checkOutDate.getTime());
-            ps.setDate(7, checkOutDateSql);
+
 
             int affectedRows = ps.executeUpdate();
             return affectedRows > 0;
@@ -75,7 +73,20 @@ public class CheckOutDB {
         }
     }
     
+   public boolean returnItem(int checkOutId) {
+    String sql = "UPDATE checkout SET returned = TRUE WHERE checkOutId = ?";
 
+    try (Connection con = getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, checkOutId);
+
+        int affectedRows = ps.executeUpdate();
+        return affectedRows > 0;
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        return false;
+    }
+}
 
     public boolean confirmCheckOut(int checkOutId) {
         String sql = "UPDATE checkout SET confirmedCheckout = TRUE WHERE checkOutid = ?";
@@ -92,17 +103,17 @@ public class CheckOutDB {
         }
     }
 
- public List<CheckOut> getAllConfirmedCheckOuts(int userId) {
+ public List<CheckOut> getAllConfirmedCheckOuts( ) {
     List<CheckOut> checkOuts = new ArrayList<>();
-    String sql = "SELECT * FROM checkout WHERE confirmedCheckout = TRUE AND returned = FALSE AND deleted = FALSE AND userId = ?";
+    String sql = "SELECT * FROM checkout WHERE confirmedCheckout = TRUE AND returned = FALSE ";
 
     try (Connection con = getConnection();
          PreparedStatement ps = con.prepareStatement(sql)) {
-        ps.setInt(1, userId);
         try (ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 int checkOutid = rs.getInt("checkOutid");
                 String userName = rs.getString("userName");
+                int userId = rs.getInt("userId");
                 String equipmentName = rs.getString("equipmentName");
                 int quantity = rs.getInt("quantity");
                 String campusName = rs.getString("campusName");
@@ -126,7 +137,7 @@ public class CheckOutDB {
     
     public List<CheckOut> getAllUnconfirmedCheckOuts() {
             List<CheckOut> checkOuts = new ArrayList<>();
-            String sql = "SELECT * FROM checkout WHERE confirmedCheckout = FALSE AND returned = FALSE AND deleted = FALSE";
+            String sql = "SELECT * FROM checkout WHERE confirmedCheckout = FALSE AND returned = FALSE ";
 
             try (Connection con = getConnection();
                  PreparedStatement ps = con.prepareStatement(sql);

@@ -38,7 +38,7 @@ public class CheckInDB {
                     "quantity INT, " +
                     "campusName VARCHAR(255), " +
                     "image VARCHAR(255), " +
-                    "checkInDate DATE, " +
+                    "checkInDate DATE," +
                     "confirmedCheckIn BOOLEAN DEFAULT FALSE, " + // Set default to FALSE
                     "damageReport TEXT DEFAULT NULL, " +
                     "confirmedDamage BOOLEAN DEFAULT FALSE, " + // Set default to FALSE
@@ -56,49 +56,32 @@ public class CheckInDB {
 
 
 
-        public boolean insertCheckIn(CheckIn checkIn) {
-            // Correct the SQL query to remove the extra comma
-            String sql = "INSERT INTO checkin (userId, userName, equipmentName, quantity, campusName, image, checkInDate) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-            try (Connection con = getConnection();
-                 PreparedStatement ps = con.prepareStatement(sql)) {
-                ps.setInt(1, checkIn.getUserId());
-                ps.setString(2, checkIn.getUserName());
-                ps.setString(3, checkIn.getEquipmentName());
-                ps.setInt(4, checkIn.getQuantity());
-                ps.setString(5, checkIn.getCampusName());
-                ps.setString(6, checkIn.getImage());
-                ps.setDate(7, new java.sql.Date(checkIn.getCheckInDate().getTime()));
-
-                int affectedRows = ps.executeUpdate();
-                return affectedRows > 0;
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                return false;
-            }
-        }
         
-       /* public boolean insertCheckIn(CheckIn checkIn) {
-            // Correct the SQL query to remove the extra comma
-            String sql = "INSERT INTO checkin (userId, userName, equipmentName, quantity, campusName, image, checkInDate) VALUES (?, ?, ?, ?, ?, ?, ?)";
+public boolean insertCheckIn(int userId, String userName, String equipmentName, int quantity, String campusName, String image, java.util.Date checkInDate) {
+    // The SQL does not include the columns with default values.
+    String sql = "INSERT INTO checkin (userId, userName, equipmentName, quantity, campusName, image, checkInDate) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-            try (Connection con = getConnection();
-                 PreparedStatement ps = con.prepareStatement(sql)) {
-                ps.setInt(1, checkOut.getUserId());
-                ps.setString(2, checkIn.getUserName());
-                ps.setString(3, checkIn.getEquipmentName());
-                ps.setInt(4, checkIn.getQuantity());
-                ps.setString(5, checkIn.getCampusName());
-                ps.setString(6, checkIn.getImage());
-                ps.setDate(7, new java.sql.Date(checkIn.getCheckInDate().getTime()));
+    try (Connection con = getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, userId);
+        ps.setString(2, userName);
+        ps.setString(3, equipmentName);
+        ps.setInt(4, quantity);
+        ps.setString(5, campusName);
+        ps.setString(6, image);
+        // Set the checkInDate with the current date passed to the method.
+        ps.setDate(7, new java.sql.Date(checkInDate.getTime()));
 
-                int affectedRows = ps.executeUpdate();
-                return affectedRows > 0;
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                return false;
-            }
-        }*/
+        int affectedRows = ps.executeUpdate();
+        return affectedRows > 0;
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        return false;
+    }
+}
+
 
 
 
@@ -199,7 +182,34 @@ public class CheckInDB {
 
     
 
-
+    public CheckIn getCheckInById(int checkInId) {
+        String sql = "SELECT * FROM checkin WHERE checkInId = ?";
+        try (Connection con = getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, checkInId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new CheckIn(
+                    rs.getInt("checkInId"),
+                    rs.getInt("userId"),
+                    rs.getString("userName"),
+                    rs.getString("equipmentName"),
+                    rs.getInt("quantity"),
+                    rs.getString("campusName"),
+                    rs.getString("image"),
+                    rs.getDate("checkInDate"),
+                    rs.getBoolean("confirmedCheckIn"),
+                    rs.getString("damageReport"),
+                    rs.getBoolean("deleted"),
+                    rs.getBoolean("confirmedDamage")
+                );
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    
 
 
     public List<CheckIn> getAllCheckIns() {
@@ -291,6 +301,40 @@ public class CheckInDB {
     
 
                 CheckIn checkIn = new CheckIn(checkInId, userId, userName, equipmentName, quantity , campusName, image, checkInDate, false, damageReport, false, confirmedDamage);
+                checkIns.add(checkIn);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return checkIns;
+    }
+    
+   
+
+    public List<CheckIn> getCheckInsWithDamageReports() {
+        List<CheckIn> checkIns = new ArrayList<>();
+        // SQL query to select records where damageReport is not NULL and deleted is FALSE
+        String sql = "SELECT * FROM checkin WHERE damageReport IS NOT NULL AND confirmedDamage = FALSE AND deleted = FALSE";
+
+        try (Connection con = getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                int checkInId = rs.getInt("checkInId");
+                int userId = rs.getInt("userId");
+                String userName = rs.getString("userName");
+                String equipmentName = rs.getString("equipmentName");
+                int quantity = rs.getInt("quantity");
+                String campusName = rs.getString("campusName");
+                String image = rs.getString("image");
+                java.sql.Date checkInDate = rs.getDate("checkInDate");
+                boolean confirmedCheckIn = rs.getBoolean("confirmedCheckIn");
+                String damageReport = rs.getString("damageReport");
+                boolean confirmedDamage = rs.getBoolean("confirmedDamage");
+                boolean deleted = rs.getBoolean("deleted");
+
+                CheckIn checkIn = new CheckIn(checkInId, userId, userName, equipmentName, quantity, campusName, image, checkInDate, confirmedCheckIn, damageReport, deleted, confirmedDamage);
                 checkIns.add(checkIn);
             }
         } catch (SQLException ex) {
