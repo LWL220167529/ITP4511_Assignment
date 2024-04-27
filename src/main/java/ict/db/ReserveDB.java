@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ict.bean.CampusEquipment;
+import ict.bean.CheckoutStatistic;
 import ict.bean.UserReserve;
 import ict.bean.WishEquipment;
 
@@ -723,6 +724,56 @@ public class ReserveDB {
             }
         }
         return result;
+    }
+
+    public List<CheckoutStatistic> getCheckoutStatisticByEquipmentAndCampus(String campusId, Date startDate, Date endDate) {
+        List<CheckoutStatistic> statistics = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT COUNT(*), e.name, e.image, e.id " +
+                     "FROM Reserve r " +
+                     "JOIN campus_equipment ce ON ce.id = r.equipment_id " +
+                     "JOIN equipment e ON e.id = ce.equipment_id " +
+                     "WHERE r.belong_campus_id = ? AND r.date > ? AND r.date < ? " +
+                     "GROUP BY e.name, e.image, e.id " +
+                     "ORDER BY COUNT(*) DESC";
+        try {
+            conn = getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, campusId);
+            pstmt.setDate(2, startDate);
+            pstmt.setDate(3, endDate);
+            rs = pstmt.executeQuery();
+            while (rs.next()) {
+                int count = rs.getInt(1);
+                String equipmentName = rs.getString(2);
+                CheckoutStatistic statistic = new CheckoutStatistic(count);
+                statistic.setName(equipmentName);
+                statistic.setImage(rs.getString(3));
+                statistic.setId(rs.getInt(4));
+                statistics.add(statistic);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return statistics;
     }
 
     public WishEquipment setReserves(ResultSet rsReserve, ResultSet rsUser, ResultSet rsCampus, ResultSet rsDelivery)

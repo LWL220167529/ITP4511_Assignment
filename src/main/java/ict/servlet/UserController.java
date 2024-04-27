@@ -63,7 +63,7 @@ public class UserController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.sendRedirect(getServletContext().getContextPath() + "/userEditForm.jsp");
+        doPost(request, response);
     }
 
     /**
@@ -127,30 +127,41 @@ public class UserController extends HttpServlet {
         }
         String campus = request.getParameter("campus");
         if (campus == null || campus.isEmpty()) {
-            message += "Campus is required";
-            hasError = true;
+            campus = sessionUser.getCampus();
         }
         campus = campus.toUpperCase();
         String role = request.getParameter("role");
+        if (role == null || role.isEmpty()) {
+            role = sessionUser.getRole();
+        }
         System.out.println(role);
         if (hasError) {
             sendRedirectAndMessage(request, response, message, "/userEditForm.jsp");
             return;
         }
+        
+        username = username.trim();
+        email = email.trim();
+        phone = phone.trim();
         role = role.toLowerCase();
         try {
             user = new User(username, email, phone, campus, role);
             System.out.println(user.toString());
             user.setId(id);
         } catch (IllegalArgumentException e) {
-            sendRedirectAndMessage(request, response, e.getMessage(), "/home.jsp");
+            sendRedirectAndMessage(request, response, e.getMessage(), "");
             return;
         }
         if (!db.updateUser(user)) {
             sendRedirectAndMessage(request, response, "Failed to update user", "/userEditForm.jsp");
             return;
+        } else {
+            HttpSession session = request.getSession();
+            if (sessionUser.getId() == id) {
+                session.setAttribute("user", user);
+            }
         }
-        sendRedirectAndMessage(request, response, "User updated successfully", "/user.jsp");
+        sendRedirectAndMessage(request, response, "User updated successfully", "");
     }
 
     public void showUserEditForm(HttpServletRequest request, HttpServletResponse response)

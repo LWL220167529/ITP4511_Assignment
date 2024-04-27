@@ -16,10 +16,6 @@
     
     <body>
         <%@ include file="header.jsp" %>
-        <% if (!role.equalsIgnoreCase("admin") && headerUser.getId() != user.getId()) { %>
-           
-        response.sendRedirect("Equipment?action=getCampus&campus=" + campus);
-        } %>
         <% User user = (User) session.getAttribute("userForm"); 
             if (user == null) { 
         %>
@@ -31,6 +27,10 @@
         <%
             } else {
         %>
+        <% if (!role.equalsIgnoreCase("admin") && headerUser.getId() != user.getId()) {
+           
+        response.sendRedirect("");
+        } %>
         <form method="post" action="User">
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="id" value="<%= user.getId() %>">
@@ -47,6 +47,7 @@
                     <td>Email:</td>
                     <td><input type="text" name="email" value="<%= user.getEmail() %>"></td>
                 </tr>
+                <% if (role.equalsIgnoreCase("admin")) { %>
                 <tr>
                     <td>Campus:</td>
                     <td>
@@ -73,6 +74,7 @@
                         </select>
                     </td>
                 </tr>
+                <% } %>
                 <tr>
                     <td colspan="2"><center><input type="submit" value="Update"></center></td>
                 </tr>

@@ -22,6 +22,7 @@ import javax.servlet.ServletContext;
 import ict.bean.WishList;
 import ict.bean.WishEquipment;
 import ict.bean.CampusEquipment;
+import ict.bean.CheckoutStatistic;
 import ict.bean.User;
 import ict.bean.Users;
 import ict.db.CampusEquipmentDB;
@@ -156,9 +157,49 @@ public class ReserveController extends HttpServlet {
         } else if ("deliveryStatus".equalsIgnoreCase(action)) {
 
             updateDeliveryStatusReserve(request, response);
+
+        } else if ("statistic".equalsIgnoreCase(action)) {
+
+            getStatistic(request, response);
+            
         } else {
             response.sendRedirect(
                     request.getServletContext().getContextPath());
+        }
+    }
+
+    private void getStatistic(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            HttpSession session = request.getSession(); // Change the cast to HttpSession
+            User user;
+            if (session.getAttribute("user") == null) {
+                response.sendRedirect("Login");
+                return;
+            } else {
+                user = (User) session.getAttribute("user");
+            }
+
+            Date startDate = request.getParameter("startDate") == null ? new Date(System.currentTimeMillis()) : Date.valueOf(request.getParameter("startDate"));
+
+            Date endDate = request.getParameter("endDate") == null ? new Date(System.currentTimeMillis()) : Date.valueOf(request.getParameter("endDate"));
+
+            String campus = request.getParameter("campus") == null ? user.getCampus() : request.getParameter("campus");
+            try {
+                List<CheckoutStatistic> statistic = db.getCheckoutStatisticByEquipmentAndCampus(campus, startDate, endDate);
+
+                request.setAttribute("startDate", startDate);
+                request.setAttribute("endDate", endDate);
+                request.setAttribute("campus", campus);
+                request.setAttribute("CheckoutStatistics", statistic);
+
+                request.getRequestDispatcher("statistic.jsp").forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            request.getRequestDispatcher("statistic.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

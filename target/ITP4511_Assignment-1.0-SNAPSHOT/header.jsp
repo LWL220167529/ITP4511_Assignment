@@ -12,7 +12,8 @@
     <% 
     String role = "";
     String campus = "";
-    if (headerUser != null) { role = headerUser.getRole(); campus = headerUser.getCampus(); } %>
+    int id = 0;
+    if (headerUser != null) { role = headerUser.getRole(); campus = headerUser.getCampus(); id = headerUser.getId();} %>
     <div class="page" style="margin-left: 5%">
       <a
         href="<%= request.getServletContext().getContextPath() %>"
@@ -76,6 +77,11 @@
         >User</a
       >
     </div>
+    <div class="page">
+      <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=statistic"
+        >Statistic</a
+      >
+    </div>
     <% } %> <% } %>
     <div class="logout" style="margin-right: 5%">
       <a
@@ -87,7 +93,7 @@
       <a>Campus : <%= campus %> </a>
     </div>
     <div class="user">
-      <a
+      <a href="<%= request.getServletContext().getContextPath() %>/User?action=edit&id=<%= id %>"
         >Welcome <%= (headerUser != null) ? headerUser.getUsername() : "" %> (
         <%= (headerUser != null) ? role : "" %> )</a
       >
