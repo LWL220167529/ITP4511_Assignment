@@ -1,0 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+.container {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.card {
+    width: 55%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    background-color: #fff;
+    margin-bottom: 20px; /* Adjust the space between cards */
+    padding: 10px;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto; /* This centers the card */
+}
+/* Additional styles for layout and aesthetics */
+.card h5 {
+    margin-top: 0;
+    color: #333;
+    margin-bottom: 15px;
+}
+.card a {
+    text-decoration: none;
+    color: #0066CC;
+    margin-right: 10px;
+}
+.card .row {
+    margin-bottom: 10px;
+}
+.card .col-md-4 {
+    font-weight: bold;
+}
+.card .col-md-8 {
+    color: #555;
+}
