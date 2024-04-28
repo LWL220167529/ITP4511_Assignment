@@ -1,13 +1,33 @@
 <%@ page import="ict.bean.User" %>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="css/header.css" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="header.css" />
   <% User headerUser = (User) session.getAttribute("user"); if (headerUser ==
   null) { response.sendRedirect("Login"); return; }  String message =
   (String) session.getAttribute("message"); if (message != null) { %>
+  <div class="modal fade" id="myObject" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Message</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <%=message%>
+        </div>
+      </div>
+    </div>
+  </div>
   <script>
-    alert("<%=message%>");
+      var myModal = new bootstrap.Modal(document.getElementById('myObject'));
+      myModal.show();
   </script>
   <% session.removeAttribute("message"); } %>
+  <style>
+    th {
+      text-align: center;
+    }
+  </style>
   <nav>
     <% 
     String role = "";
@@ -81,7 +101,7 @@
       <a href="<%= request.getServletContext().getContextPath() %>/Reserve?action=statistic"
         >Statistic</a
       >
-    </div>
+    </div> 
     <% } %> <% } %>
     <div class="logout" style="margin-right: 5%">
       <a

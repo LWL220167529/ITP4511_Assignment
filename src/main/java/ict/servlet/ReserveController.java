@@ -104,7 +104,7 @@ public class ReserveController extends HttpServlet {
                 try {
                     int id = Integer.parseInt(request.getParameter("id"));
                     db.cancelReserve(id);
-                    response.sendRedirect("Reserve?action=list");
+                    sendRedirectAndMessage(request, response, "The order canceled", "Reserve?action=list");
                 } catch (NumberFormatException e) {
                     // Handle the exception if the parameter "id" cannot be parsed as an integer
                     e.printStackTrace();
@@ -410,11 +410,16 @@ public class ReserveController extends HttpServlet {
         ServletContext context = getServletContext();
         UserReserves reserves = (UserReserves) context.getAttribute("reserves");
         Date date = request.getParameter("date") == null ? new Date(System.currentTimeMillis())
-                : Date.valueOf(request.getParameter("date"));
+            : Date.valueOf(request.getParameter("date"));
 
-        if (reserves == null) {
+        if (date.compareTo(new Date(System.currentTimeMillis())) < 0) {
+            sendRedirectAndMessage(request, response, "Invalid date", "/Equipment?action=getCampus&campus=" + user.getCampus());
+            return;
+        }
+
+        if (reserves.isUserReserveEmpty()) {
             sendRedirectAndMessage(request, response, "Wish list is null",
-                    "/Equipment?action=getCampus&campus=" + user.getCampus());
+                "/Equipment?action=getCampus&campus=" + user.getCampus());
             return;
         }
 

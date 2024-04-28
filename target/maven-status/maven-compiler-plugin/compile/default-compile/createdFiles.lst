@@ -8,6 +8,7 @@ ict\run\CreateEquipmentTable.class
 ict\bean\Users.class
 ict\run\AddEquipment.class
 ict\tag\UserTag.class
+ict\bean\CheckoutStatistic.class
 ict\db\UserDB.class
 ict\servlet\LoginController.class
 ict\bean\CampusEquipment.class

@@ -41,7 +41,7 @@
         <th>Quantity</th>
         <% if (!"pending".equalsIgnoreCase(request.getParameter("action"))) { %><th>Delivery Username</th> <% } %>
         <th>Status</th>
-        <th>Estimated Time</th>
+        <th>Estimated delivery date</th>
         <th colspan="<%= (role.equalsIgnoreCase("Technician") || role.equalsIgnoreCase("admin"))? "2" : "1" %>">Action</th>
       </tr>
       <% 
@@ -67,7 +67,7 @@
 
             </td>
           <% } %>
-          <td><%= wishEquipment.getStatus() %></td>
+          <td><%= wishEquipment.getStatus().equalsIgnoreCase("Delivery")? "Delivering" : wishEquipment.getStatus() %></td>
           <td><%= wishEquipment.getDate() %></td>
           <td>
             <% if (role != null) { %> 

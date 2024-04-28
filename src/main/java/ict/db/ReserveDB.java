@@ -735,7 +735,7 @@ public class ReserveDB {
                      "FROM Reserve r " +
                      "JOIN campus_equipment ce ON ce.id = r.equipment_id " +
                      "JOIN equipment e ON e.id = ce.equipment_id " +
-                     "WHERE r.belong_campus_id = ? AND r.date > ? AND r.date < ? " +
+                     "WHERE r.belong_campus_id = ? and r.status != 'approved' and r.status != 'Pending' AND r.date > ? AND r.date < ? " +
                      "GROUP BY e.name, e.image, e.id " +
                      "ORDER BY COUNT(*) DESC";
         try {

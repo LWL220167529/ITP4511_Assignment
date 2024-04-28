@@ -146,8 +146,9 @@
           </tr>
         <% } } %>
       </table>
+      <div class="text-center mt-3">
       <% if (!"completed".equalsIgnoreCase(status)) { %>
       <button onclick="submitStatus()">Submit</button>
-      <% } %>
+      <% } %></div>
 </body>
 </html>

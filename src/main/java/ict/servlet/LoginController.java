@@ -164,6 +164,10 @@ public class LoginController extends HttpServlet {
         return;
     }
 
+    public String test() {
+        return "test";
+    }
+
     /**
      * Returns a short description of the servlet.
      *

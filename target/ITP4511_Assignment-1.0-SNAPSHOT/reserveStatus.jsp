@@ -23,7 +23,7 @@
             <th>Status</th>
         </tr>
         <tr>
-            <td width="10%" height="10%"><img width="100%" height="100%" src="<%= (campusEquipment.getEquipmentImage() != null) ? "img/" + campusEquipment.getEquipmentImage() : "http://travelmen.org/static/images/404.png" %>" /></td>
+            <td width="20%" height="10%"><img width="100%" height="100%" src="<%= (campusEquipment.getEquipmentImage() != null) ? "img/" + campusEquipment.getEquipmentImage() : "http://travelmen.org/static/images/404.png" %>" /></td>
             <td><%= campusEquipment.getEquipmentName() %></td>
             <td><%= campusEquipment.getCampus() %></td>
             <td><%= campusEquipment.getQuantity() %></td>
