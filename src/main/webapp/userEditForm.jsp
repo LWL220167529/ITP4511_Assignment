@@ -52,19 +52,20 @@
                     <td>Campus:</td>
                     <td>
                         <% campus = user.getCampus(); %>
+                        <% role = user.getRole(); %>
                         <select name="campus" id="campus">
-                            <option value="CW" <%= campus.equals("CW") ? "selected" : "" %>>Chai Wan</option>
-                            <option value="LWL" <%= campus.equals("LWL") ? "selected" : "" %>>Lee Wai Lee </option>
-                            <option value="ST" <%= campus.equals("ST") ? "selected" : "" %>>Sha Tin</option>
-                            <option value="TM" <%= campus.equals("TM") ? "selected" : "" %>>Tuen Mun</option>
-                            <option value="TY" <%= campus.equals("TY") ? "selected" : "" %>>Tsing Yi</option>
+                            <option value="CW" <%= campus.equals("CW") && !role.equals("courier") ? "selected" : "" %>>Chai Wan</option>
+                            <option value="LWL" <%= campus.equals("LWL") && !role.equals("courier")  ? "selected" : "" %>>Lee Wai Lee </option>
+                            <option value="ST" <%= campus.equals("ST") && !role.equals("courier")  ? "selected" : "" %>>Sha Tin</option>
+                            <option value="TM" <%= campus.equals("TM") && !role.equals("courier")  ? "selected" : "" %>>Tuen Mun</option>
+                            <option value="TY" <%= campus.equals("TY") && !role.equals("courier")  ? "selected" : "" %>>Tsing Yi</option>
+                            <option value="CW" <%= role.equals("courier") ? "selected" : "" %>>Other</option>
                         </select>
                     </td>
                 </tr>
                 <tr>
                     <td>Role:</td>
                     <td>
-                        <% role = user.getRole(); %>
                         <select name="role">
                             <option value="user" <%= role.equals("user") ? "selected" : "" %>>User</option>
                             <option value="technician" <%= role.equals("technician") ? "selected" : "" %>>Technician</option>

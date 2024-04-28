@@ -26,15 +26,4 @@ public class Database {
 
         return DriverManager.getConnection(dburl, dbUser, dbPassword);
     }
-
-    public void closeConnection(Connection con) {
-        try {
-            if (con != null) {
-                con.close();
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-
 }

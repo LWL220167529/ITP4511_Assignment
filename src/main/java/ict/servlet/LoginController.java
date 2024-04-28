@@ -157,8 +157,7 @@ public class LoginController extends HttpServlet {
         } else {
             String error = "Invalid login. Please try again.";
             session.setAttribute("error", error);
-            targetURL = getServletContext().getContextPath(); // Fix: Call getContextPath() method to get the context
-                                                              // path as a string
+            targetURL = getServletContext().getContextPath(); 
         }
         response.sendRedirect(targetURL);
         return;

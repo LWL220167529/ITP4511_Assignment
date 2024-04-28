@@ -657,6 +657,7 @@ public class ReserveDB {
                 return false;
             } else {
                 if (equipmentDB.updateCampusEquipmentQuantity(userReserve.getEquipmentId(), campusEquipment.getQuantity() - userReserve.getQuantity())) {
+                    equipmentDB.updateStatusForQuantityLessThanOne();
                     result = true;
                 } else {
                     System.out.println("Failed to update campus equipment quantity.");
