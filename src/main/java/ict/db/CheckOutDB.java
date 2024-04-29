@@ -1,31 +1,24 @@
 package ict.db;
 
 import ict.bean.CheckOut;
+import ict.db.Database;
+
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 
 public class CheckOutDB {
-    private String dburl;
-    private String dbUser;
-    private String dbPassword;
+    private Database db;
 
-    public CheckOutDB(String dburl, String dbUser, String dbPassword) {
-        this.dburl = dburl;
-        this.dbUser = dbUser;
-        this.dbPassword = dbPassword;
+    public CheckOutDB(Database db) {
+        this.db = db;
     }
 
-    private Connection getConnection() throws SQLException {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace(); // Log or handle the class not found exception
-            throw new SQLException("Driver not found", ex);
-        }
-        return DriverManager.getConnection(dburl, dbUser, dbPassword);
+    private Connection getConnection() throws SQLException, IOException {
+        return db.getConnection();
     }
 
-    public boolean createCheckOutTable() {
+    public boolean createCheckOutTable() throws IOException {
         String sql = "CREATE TABLE IF NOT EXISTS checkout (" +
                 "checkOutId INT PRIMARY KEY AUTO_INCREMENT, " +
                 "userId INT, " +
@@ -50,7 +43,7 @@ public class CheckOutDB {
     }
 
 
-    public boolean insertCheckOutForUser(int userId,  String userName, String equipmentName, int quantity, String campusName, String image) {
+    public boolean insertCheckOutForUser(int userId,  String userName, String equipmentName, int quantity, String campusName, String image) throws IOException {
         String sql = "INSERT INTO checkout (userId, userName, equipmentName, quantity, campusName, image) " +
                      "VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -73,7 +66,7 @@ public class CheckOutDB {
         }
     }
     
-   public boolean returnItem(int checkOutId) {
+   public boolean returnItem(int checkOutId) throws IOException {
     String sql = "UPDATE checkout SET returned = TRUE WHERE checkOutId = ?";
 
     try (Connection con = getConnection();
@@ -88,7 +81,7 @@ public class CheckOutDB {
     }
 }
 
-    public boolean confirmCheckOut(int checkOutId) {
+    public boolean confirmCheckOut(int checkOutId) throws IOException {
         String sql = "UPDATE checkout SET confirmedCheckout = TRUE WHERE checkOutid = ?";
 
         try (Connection con = getConnection();
@@ -103,7 +96,7 @@ public class CheckOutDB {
         }
     }
 
- public List<CheckOut> getAllConfirmedCheckOuts( ) {
+ public List<CheckOut> getAllConfirmedCheckOuts( ) throws IOException {
     List<CheckOut> checkOuts = new ArrayList<>();
     String sql = "SELECT * FROM checkout WHERE confirmedCheckout = TRUE AND returned = FALSE ";
 
@@ -130,7 +123,7 @@ public class CheckOutDB {
     return checkOuts;
 }
 
-public List<CheckOut> getConfirmedCheckOutsForUser(int userId) {
+public List<CheckOut> getConfirmedCheckOutsForUser(int userId) throws IOException {
     List<CheckOut> checkOuts = new ArrayList<>();
     String sql = "SELECT * FROM checkout WHERE confirmedCheckout = TRUE AND returned = FALSE AND userId = ?";
 
@@ -160,7 +153,7 @@ public List<CheckOut> getConfirmedCheckOutsForUser(int userId) {
     
     
     
-    public List<CheckOut> getAllUnconfirmedCheckOuts() {
+    public List<CheckOut> getAllUnconfirmedCheckOuts() throws IOException {
             List<CheckOut> checkOuts = new ArrayList<>();
             String sql = "SELECT * FROM checkout WHERE confirmedCheckout = FALSE AND returned = FALSE AND deleted = false";
 
@@ -189,7 +182,7 @@ public List<CheckOut> getConfirmedCheckOutsForUser(int userId) {
 
 
 
-    public boolean deleteCheckOut(int checkOutId) {
+    public boolean deleteCheckOut(int checkOutId) throws IOException {
         String sql = "UPDATE checkout SET deleted = TRUE WHERE checkOutid = ?";
 
         try (Connection con = getConnection();

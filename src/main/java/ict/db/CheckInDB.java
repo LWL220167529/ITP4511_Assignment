@@ -8,28 +8,20 @@ import java.util.*;
 import ict.bean.User;
 import ict.bean.Users;
 
+import ict.db.Database;
+
 public class CheckInDB {
-    private String dburl;
-    private String dbUser;
-    private String dbPassword;
+    private Database db;
 
-    public CheckInDB(String dburl, String dbUser, String dbPassword) {
-        this.dburl = dburl;
-        this.dbUser = dbUser;
-        this.dbPassword = dbPassword;
+    public CheckInDB(Database db) {
+        this.db = db;
     }
 
-    private Connection getConnection() throws SQLException {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace(); // Log or handle the class not found exception
-            throw new SQLException("Driver not found", ex);
-        }
-        return DriverManager.getConnection(dburl, dbUser, dbPassword);
+    private Connection getConnection() throws SQLException, IOException {
+        return db.getConnection();
     }
 
-        public boolean createCheckInTable() {
+        public boolean createCheckInTable() throws IOException {
             String sql = "CREATE TABLE IF NOT EXISTS checkin (" +
                     "checkInId INT PRIMARY KEY AUTO_INCREMENT, " +
                     "userId INT, " +
@@ -58,7 +50,7 @@ public class CheckInDB {
 
 
         
-public boolean insertCheckIn(int userId, String userName, String equipmentName, int quantity, String campusName, String image, java.util.Date checkInDate) {
+public boolean insertCheckIn(int userId, String userName, String equipmentName, int quantity, String campusName, String image, java.util.Date checkInDate) throws IOException {
     // The SQL does not include the columns with default values.
     String sql = "INSERT INTO checkin (userId, userName, equipmentName, quantity, campusName, image, checkInDate) " +
                  "VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -85,7 +77,7 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
 
 
 
-       public boolean updateCheckIn(CheckIn checkIn) {
+       public boolean updateCheckIn(CheckIn checkIn) throws IOException {
             String sql = "UPDATE checkin SET userId = ?, UserName = ?, equipmentName = ?, quantity = ?, CampusName = ?, image = ?, checkInDate = ?, confirmedCheckIn = ?, damageReport = ?, confirmedDamage = ?, deleted = ? WHERE checkInId = ?";
 
             try (Connection con = getConnection();
@@ -103,21 +95,21 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
                 ps.setBoolean(11, checkIn.isDeleted());
                 ps.setInt(12, checkIn.getCheckInId());
 
-                int affectedRows = ps.executeUpdate();
-                return affectedRows > 0;
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-                return false;
-            }
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
         }
+    }
 
 
-    public boolean confirmCheckIn(int checkInId) {
+    public boolean confirmCheckIn(int checkInId) throws IOException {
         // Assuming 'confirmedCheckIn' is a BOOLEAN column in your database
         String sql = "UPDATE checkin SET confirmedCheckIn = TRUE WHERE checkInId = ?";
 
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, checkInId);
 
             return ps.executeUpdate() > 0;
@@ -127,49 +119,43 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
         }
     }
 
-    public boolean reportDamage(int checkInId, String damageReport) {
-    String sql = "UPDATE checkin SET damageReport = ? WHERE checkInId = ?";
+    public boolean reportDamage(int checkInId, String damageReport) throws IOException {
+        String sql = "UPDATE checkin SET damageReport = ? WHERE checkInId = ?";
 
-    try (Connection con = getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-        ps.setString(1, damageReport); // Set the new damage report text
-        ps.setInt(2, checkInId); // Specify which check-in to update
+        try (Connection con = getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, damageReport); // Set the new damage report text
+            ps.setInt(2, checkInId); // Specify which check-in to update
 
-        int affectedRows = ps.executeUpdate();
-        return affectedRows > 0; // Return true if the update was successful
-    } catch (SQLException ex) {
-        ex.printStackTrace();
-        return false; // Return false if there was a SQL exception
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0; // Return true if the update was successful
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false; // Return false if there was a SQL exception
+        }
     }
-   }
 
-    
-    
-    
-    public boolean confirmDamage(int checkInId) {
-    String sql = "UPDATE checkin SET confirmedDamage = ? WHERE checkInId = ?";
+    public boolean confirmDamage(int checkInId) throws IOException {
+        String sql = "UPDATE checkin SET confirmedDamage = ? WHERE checkInId = ?";
 
-    try (Connection con = getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-        ps.setBoolean(1, true); // Set the confirmedDamage flag to true
-        ps.setInt(2, checkInId);
+        try (Connection con = getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setBoolean(1, true); // Set the confirmedDamage flag to true
+            ps.setInt(2, checkInId);
 
-        int affectedRows = ps.executeUpdate();
-        return affectedRows > 0;
-    } catch (SQLException ex) {
-        ex.printStackTrace();
-        return false;
+            int affectedRows = ps.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
-  }
 
-    
-    
-    
-    public boolean deleteCheckIn(int checkInId) {
+    public boolean deleteCheckIn(int checkInId) throws IOException {
         String sql = "DELETE FROM checkin WHERE checkInId = ?";
 
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+                PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, checkInId);
 
             int affectedRows = ps.executeUpdate();
@@ -182,7 +168,7 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
 
     
 
-    public CheckIn getCheckInById(int checkInId) {
+    public CheckIn getCheckInById(int checkInId) throws IOException {
         String sql = "SELECT * FROM checkin WHERE checkInId = ?";
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -212,13 +198,13 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
     
 
 
-    public List<CheckIn> getAllCheckIns() {
+    public List<CheckIn> getAllCheckIns() throws IOException {
         List<CheckIn> checkIns = new ArrayList<>();
         String sql = "SELECT * FROM checkin";
 
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 int checkInId = rs.getInt("checkInId");
@@ -242,15 +228,15 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
         }
         return checkIns;
     }
-    
-    public List<CheckIn> getAllConfirmedCheckIns() {
+
+    public List<CheckIn> getAllConfirmedCheckIns() throws IOException {
         List<CheckIn> checkIns = new ArrayList<>();
         // Include the condition to check for records where deleted is FALSE
         String sql = "SELECT * FROM checkin WHERE confirmedCheckIn = TRUE AND deleted = FALSE";
 
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = con.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 int checkInId = rs.getInt("checkInId");
@@ -278,7 +264,7 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
     
     
 
-    public List<CheckIn> getAllUnconfirmedCheckIns() {
+    public List<CheckIn> getAllUnconfirmedCheckIns() throws IOException {
         List<CheckIn> checkIns = new ArrayList<>();
         // Include the condition to check for records where deleted is FALSE
         String sql = "SELECT * FROM checkin WHERE confirmedCheckIn = FALSE AND deleted = FALSE AND deleted = FALSE";
@@ -296,6 +282,7 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
                 String campusName = rs.getString("campusName");
                 String image = rs.getString("image");
                 java.sql.Date checkInDate = rs.getDate("checkInDate");
+                boolean confirmedCheckIn = rs.getBoolean("confirmedCheckIn");
                 String damageReport = rs.getString("damageReport");
                 boolean confirmedDamage = rs.getBoolean("confirmedDamage");
     
@@ -311,7 +298,7 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
     
    
 
-    public List<CheckIn> getCheckInsWithDamageReports() {
+    public List<CheckIn> getCheckInsWithDamageReports() throws IOException {
         List<CheckIn> checkIns = new ArrayList<>();
         // SQL query to select records where damageReport is not NULL and deleted is FALSE
         String sql = "SELECT * FROM checkin WHERE damageReport IS NOT NULL AND confirmedDamage = FALSE AND deleted = FALSE";
@@ -344,4 +331,3 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
     }
 
 }
-
