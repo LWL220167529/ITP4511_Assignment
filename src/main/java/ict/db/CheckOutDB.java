@@ -4,18 +4,38 @@ import ict.bean.CheckOut;
 import ict.db.Database;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import ict.bean.CampusEquipment;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.util.*;
 
 public class CheckOutDB {
-    private Database db;
+    private String dburl;
+    private String dbUser;
+    private String dbPassword;
 
-    public CheckOutDB(Database db) {
-        this.db = db;
+    public CheckOutDB(String dburl, String dbUser, String dbPassword) {
+        this.dburl = dburl;
+        this.dbUser = dbUser;
+        this.dbPassword = dbPassword;
     }
 
-    private Connection getConnection() throws SQLException, IOException {
-        return db.getConnection();
+    public Connection getConnection() throws SQLException, IOException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return DriverManager.getConnection(dburl, dbUser, dbPassword);
     }
 
     public boolean createCheckOutTable() throws IOException {
@@ -47,8 +67,8 @@ public class CheckOutDB {
         String sql = "INSERT INTO checkout (userId, userName, equipmentName, quantity, campusName, image) " +
                      "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try {Connection con = getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, userId);
             ps.setString(2, userName);
               ps.setString(3, equipmentName);
@@ -84,8 +104,8 @@ public class CheckOutDB {
     public boolean confirmCheckOut(int checkOutId) throws IOException {
         String sql = "UPDATE checkout SET confirmedCheckout = TRUE WHERE checkOutid = ?";
 
-        try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try {Connection con = getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, checkOutId);
 
             int affectedRows = ps.executeUpdate();
@@ -185,8 +205,8 @@ public List<CheckOut> getConfirmedCheckOutsForUser(int userId) throws IOExceptio
     public boolean deleteCheckOut(int checkOutId) throws IOException {
         String sql = "UPDATE checkout SET deleted = TRUE WHERE checkOutid = ?";
 
-        try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try {Connection con = getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, checkOutId);
 
             return ps.executeUpdate() > 0;

@@ -3,7 +3,17 @@ package ict.db;
 import ict.bean.CheckIn;
 import ict.bean.CheckOut;
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import ict.bean.CampusEquipment;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.util.*;
 import ict.bean.User;
 import ict.bean.Users;
@@ -11,14 +21,24 @@ import ict.bean.Users;
 import ict.db.Database;
 
 public class CheckInDB {
-    private Database db;
+    private String dburl;
+    private String dbUser;
+    private String dbPassword;
 
-    public CheckInDB(Database db) {
-        this.db = db;
+    public CheckInDB(String dburl, String dbUser, String dbPassword) {
+        this.dburl = dburl;
+        this.dbUser = dbUser;
+        this.dbPassword = dbPassword;
     }
 
-    private Connection getConnection() throws SQLException, IOException {
-        return db.getConnection();
+    public Connection getConnection() throws SQLException, IOException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return DriverManager.getConnection(dburl, dbUser, dbPassword);
     }
 
         public boolean createCheckInTable() throws IOException {
@@ -55,8 +75,8 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
     String sql = "INSERT INTO checkin (userId, userName, equipmentName, quantity, campusName, image, checkInDate) " +
                  "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    try (Connection con = getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+    try {Connection con = getConnection();
+         PreparedStatement ps = con.prepareStatement(sql);
         ps.setInt(1, userId);
         ps.setString(2, userName);
         ps.setString(3, equipmentName);
@@ -80,8 +100,8 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
        public boolean updateCheckIn(CheckIn checkIn) throws IOException {
             String sql = "UPDATE checkin SET userId = ?, UserName = ?, equipmentName = ?, quantity = ?, CampusName = ?, image = ?, checkInDate = ?, confirmedCheckIn = ?, damageReport = ?, confirmedDamage = ?, deleted = ? WHERE checkInId = ?";
 
-            try (Connection con = getConnection();
-                 PreparedStatement ps = con.prepareStatement(sql)) {
+            try {Connection con = getConnection();
+                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.setInt(1, checkIn.getUserId());
                 ps.setString(2, checkIn.getUserName());
                 ps.setString(3, checkIn.getEquipmentName());
@@ -108,8 +128,8 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
         // Assuming 'confirmedCheckIn' is a BOOLEAN column in your database
         String sql = "UPDATE checkin SET confirmedCheckIn = TRUE WHERE checkInId = ?";
 
-        try (Connection con = getConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try {Connection con = getConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, checkInId);
 
             return ps.executeUpdate() > 0;
@@ -122,8 +142,8 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
     public boolean reportDamage(int checkInId, String damageReport) throws IOException {
         String sql = "UPDATE checkin SET damageReport = ? WHERE checkInId = ?";
 
-        try (Connection con = getConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try {Connection con = getConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, damageReport); // Set the new damage report text
             ps.setInt(2, checkInId); // Specify which check-in to update
 
@@ -138,8 +158,8 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
     public boolean confirmDamage(int checkInId) throws IOException {
         String sql = "UPDATE checkin SET confirmedDamage = ? WHERE checkInId = ?";
 
-        try (Connection con = getConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try {Connection con = getConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
             ps.setBoolean(1, true); // Set the confirmedDamage flag to true
             ps.setInt(2, checkInId);
 
@@ -154,8 +174,8 @@ public boolean insertCheckIn(int userId, String userName, String equipmentName, 
     public boolean deleteCheckIn(int checkInId) throws IOException {
         String sql = "DELETE FROM checkin WHERE checkInId = ?";
 
-        try (Connection con = getConnection();
-                PreparedStatement ps = con.prepareStatement(sql)) {
+        try {Connection con = getConnection();
+                PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, checkInId);
 
             int affectedRows = ps.executeUpdate();

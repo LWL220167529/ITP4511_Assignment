@@ -13,7 +13,10 @@
 <body>
 <%@ include file="header.jsp" %>
 <%
-    CheckOutDB checkOutDB = new CheckOutDB("jdbc:mysql://localhost:3306/ITP4511_Assignment_DB?useSSL=false", "root", ""); 
+String dbUrl = request.getServletContext().getInitParameter("dbUrl");
+String dbUser = request.getServletContext().getInitParameter("dbUser");
+String dbPassword = request.getServletContext().getInitParameter("dbPassword");
+    CheckOutDB checkOutDB = new CheckOutDB(dbUrl, dbUser, dbPassword); 
     List<CheckOut> checkOuts = checkOutDB.getConfirmedCheckOutsForUser(headerUser.getId());
     
 %>

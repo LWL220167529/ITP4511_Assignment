@@ -18,7 +18,10 @@ function setAction(form) {
 <body>
 <%@ include file="header.jsp" %>
 <%
-     CheckInDB checkInDB = new CheckInDB("jdbc:mysql://localhost:3306/ITP4511_Assignment_DB", "root", ""); 
+String dbUrl = request.getServletContext().getInitParameter("dbUrl");
+String dbUser = request.getServletContext().getInitParameter("dbUser");
+String dbPassword = request.getServletContext().getInitParameter("dbPassword");
+     CheckInDB checkInDB = new CheckInDB(dbUrl, dbUser, dbPassword); 
      List<CheckIn> checkIns = checkInDB.getCheckInsWithDamageReports();
 %>
 <div class="container my-4">

@@ -34,10 +34,8 @@ public class CheckInController extends HttpServlet {
         String dbUser = getServletContext().getInitParameter("dbUser");
         String dbPassword = getServletContext().getInitParameter("dbPassword");
 
-        Database db = new Database(dbUrl, dbUser, dbPassword);
-
-        checkInDB = new CheckInDB(db);
-        checkOutDB = new CheckOutDB(db);
+        checkInDB = new CheckInDB(dbUrl, dbUser, dbPassword);
+        checkOutDB = new CheckOutDB(dbUrl, dbUser, dbPassword);
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

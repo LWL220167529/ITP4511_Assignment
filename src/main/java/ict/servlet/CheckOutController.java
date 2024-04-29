@@ -34,9 +34,7 @@ public class CheckOutController extends HttpServlet {
         String dbUser = getServletContext().getInitParameter("dbUser");
         String dbPassword = getServletContext().getInitParameter("dbPassword");
 
-        Database database = new Database(dbUrl, dbUser, dbPassword);
-
-        db = new CheckOutDB(database);
+        db = new CheckOutDB(dbUrl, dbUser, dbPassword);
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
